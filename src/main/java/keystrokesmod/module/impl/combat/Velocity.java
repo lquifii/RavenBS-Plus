@@ -35,7 +35,7 @@ public class Velocity extends Module {
 
     @SubscribeEvent
     public void onLivingUpdate(LivingEvent.LivingUpdateEvent ev) {
-        if (Utils.nullCheck() && !LongJump.stopVelocity && !ModuleManager.bedAura.cancelKnockback()) {
+        if (Utils.nullCheck() && !LongJump.stopVelocity && !ModuleManager.bedAura.cancelKnockback() && !disable) {
             if (ev.entity != mc.thePlayer) {
                 return;
             }

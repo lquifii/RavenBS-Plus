@@ -56,7 +56,7 @@ public class ModuleManager {
     public static Module reduce;
     public static SafeWalk safeWalk;
     public static Module keepSprint;
-    public static Module antiKnockback;
+    public static AntiKnockback antiKnockback;
     public static ExtendCamera extendCamera;
     public static InvManager invManager;
     public static Tower tower;

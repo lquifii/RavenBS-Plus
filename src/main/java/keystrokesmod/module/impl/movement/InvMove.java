@@ -20,6 +20,7 @@ import net.minecraft.network.play.client.C0EPacketClickWindow;
 import net.minecraft.network.play.client.C16PacketClientStatus;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -92,14 +93,14 @@ public class InvMove extends Module {
             reset();
         }
 
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindForward.getKeyCode()));
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindBack.getKeyCode()));
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindRight.getKeyCode()));
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindLeft.getKeyCode()));
+        KeyBinding.setKeyBindState(mc.gameSettings.keyBindForward.getKeyCode(), isBindDown(mc.gameSettings.keyBindForward));
+        KeyBinding.setKeyBindState(mc.gameSettings.keyBindBack.getKeyCode(), isBindDown(mc.gameSettings.keyBindBack));
+        KeyBinding.setKeyBindState(mc.gameSettings.keyBindRight.getKeyCode(), isBindDown(mc.gameSettings.keyBindRight));
+        KeyBinding.setKeyBindState(mc.gameSettings.keyBindLeft.getKeyCode(), isBindDown(mc.gameSettings.keyBindLeft));
         KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), Utils.jumpDown());
-        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), Keyboard.isKeyDown(mc.gameSettings.keyBindSprint.getKeyCode()));
+        KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), isBindDown(mc.gameSettings.keyBindSprint));
         boolean foodLvlMet = (float)mc.thePlayer.getFoodStats().getFoodLevel() > 6.0F || mc.thePlayer.capabilities.allowFlying; // from mc
-        if (((Keyboard.isKeyDown(mc.gameSettings.keyBindSprint.getKeyCode()) || ModuleManager.sprint.isEnabled()) && mc.thePlayer.movementInput.moveForward >= 0.8F && foodLvlMet && !mc.thePlayer.isSprinting()) && allowSprinting.isToggled()) {
+        if (((isBindDown(mc.gameSettings.keyBindSprint) || ModuleManager.sprint.isEnabled()) && mc.thePlayer.movementInput.moveForward >= 0.8F && foodLvlMet && !mc.thePlayer.isSprinting()) && allowSprinting.isToggled()) {
             mc.thePlayer.setSprinting(true);
         }
         if (!allowSprinting.isToggled()) {
@@ -190,5 +191,14 @@ public class InvMove extends Module {
             }
         }
         blinkedPackets.clear();
+    }
+
+    private boolean isBindDown(KeyBinding keyBinding) {
+        try {
+            return Keyboard.isKeyDown(keyBinding.getKeyCode());
+        }
+        catch (IndexOutOfBoundsException e) {
+            return Mouse.isButtonDown(100 + keyBinding.getKeyCode());
+        }
     }
 }

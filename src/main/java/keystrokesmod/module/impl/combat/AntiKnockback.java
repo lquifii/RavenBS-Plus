@@ -24,6 +24,8 @@ public class AntiKnockback extends Module {
     private SliderSetting boostMultiplier;
     private ButtonSetting boostWithLMB;
 
+    public boolean disable;
+
     public AntiKnockback() {
         super("AntiKnockback", category.combat);
         this.registerSetting(new DescriptionSetting("Overrides Velocity."));
@@ -44,7 +46,7 @@ public class AntiKnockback extends Module {
             return;
         }
         if (e.getPacket() instanceof S12PacketEntityVelocity) {
-            if (((S12PacketEntityVelocity) e.getPacket()).getEntityID() == mc.thePlayer.getEntityId()) {
+            if (((S12PacketEntityVelocity) e.getPacket()).getEntityID() == mc.thePlayer.getEntityId() && !disable) {
                 if (!cancelBurning.isToggled() && mc.thePlayer.isBurning()) {
                     return;
                 }
@@ -79,7 +81,7 @@ public class AntiKnockback extends Module {
                 }
             }
         }
-        else if (e.getPacket() instanceof S27PacketExplosion) {
+        else if (e.getPacket() instanceof S27PacketExplosion && !disable) {
             if (disableInLobby.isToggled() && Utils.isLobby()) {
                 return;
             }
