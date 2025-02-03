@@ -500,7 +500,7 @@ public class Commands {
         ccs = cs.get(val);
     }
 
-    public static void od() {
+    public static void onDisable() {
         Ping.reset(false);
     }
 }

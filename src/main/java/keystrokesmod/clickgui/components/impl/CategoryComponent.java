@@ -38,7 +38,6 @@ public class CategoryComponent {
     public boolean dragging;
     public int xx;
     public int yy;
-    public boolean pin = false;
     public boolean hovering = false;
     public boolean hoveringOverCategory = false;
     public Timer smoothTimer;
@@ -143,14 +142,6 @@ public class CategoryComponent {
 
     public void overTitle(boolean d) {
         this.dragging = d;
-    }
-
-    public boolean p() {
-        return this.pin;
-    }
-
-    public void cv(boolean on) {
-        this.pin = on;
     }
 
     public boolean isOpened() {
@@ -326,10 +317,6 @@ public class CategoryComponent {
         hovering = overTitle(mouseX, mouseY);
     }
 
-    public boolean i(int x, int y) {
-        return x >= this.x + 92 - 13 && x <= this.x + this.width && (float) y >= (float) this.y + 2.0F && y <= this.y + this.titleHeight + 1;
-    }
-
     public boolean overTitle(int x, int y) {
         return x >= this.x && x <= this.x + this.width && (float) y >= (float) this.y + 2.0F && y <= this.y + this.titleHeight + 1;
     }
@@ -338,8 +325,12 @@ public class CategoryComponent {
         return x >= this.x - 2 && x <= this.x + this.width + 2 && (float) y >= (float) this.y + 2.0F && y <= this.y + this.titleHeight + big + 1;
     }
 
-    public boolean v(int x, int y) {
+    public boolean draggable(int x, int y) {
         return x >= this.x && x <= this.x + this.width && y >= this.y && y <= this.y + this.titleHeight;
+    }
+
+    public boolean overRect(int x, int y) {
+        return x >= this.x - 2 && x <= this.x + this.width + 2 && y >= this.y && y <= lastHeight;
     }
 
     private void renderItemForCategory(Module.category category, int x, int y, boolean enchant) {

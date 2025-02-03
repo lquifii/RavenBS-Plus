@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 public class Tower extends Module {
     private SliderSetting towerMove;
     private SliderSetting verticalTower;
-    private SliderSetting slowedSpeed;
+    private SliderSetting slowedMotion;
     private SliderSetting slowedTicks;
     private ButtonSetting disableWhileHurt;
     private ButtonSetting disableInLiquid;
@@ -48,7 +48,7 @@ public class Tower extends Module {
         super("Tower", category.player);
         this.registerSetting(towerMove = new SliderSetting("Move mode", 0, towerMoveModes));
         this.registerSetting(verticalTower = new SliderSetting("Vertical mode", 0, verticalTowerModes));
-        this.registerSetting(slowedSpeed = new SliderSetting("Slowed speed", "%", 0, 0, 100, 1));
+        this.registerSetting(slowedMotion = new SliderSetting("Slowed motion", "%", 0, 0, 100, 1));
         this.registerSetting(slowedTicks = new SliderSetting("Slowed ticks", 1, 0, 20, 1));
         this.registerSetting(disableInLiquid = new ButtonSetting("Disable in liquid", false));
         this.registerSetting(disableWhileCollided = new ButtonSetting("Disable while collided", false));
@@ -186,8 +186,8 @@ public class Tower extends Module {
         else {
             if (wasTowering && slowedTicks.getInput() > 0) {
                 if (slowTicks++ < slowedTicks.getInput()) {
-                    mc.thePlayer.motionX *= slowedSpeed.getInput() / 100;
-                    mc.thePlayer.motionZ *= slowedSpeed.getInput() / 100;
+                    mc.thePlayer.motionX *= slowedMotion.getInput() / 100;
+                    mc.thePlayer.motionZ *= slowedMotion.getInput() / 100;
                 }
                 else {
                     slowTicks = 0;
