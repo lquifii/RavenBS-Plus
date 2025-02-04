@@ -2,7 +2,6 @@ package keystrokesmod.module.impl.movement;
 
 import keystrokesmod.event.PostPlayerInputEvent;
 import keystrokesmod.event.PreMotionEvent;
-import keystrokesmod.event.PreUpdateEvent;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.combat.KillAura;
@@ -11,6 +10,7 @@ import keystrokesmod.module.setting.impl.SliderSetting;
 import keystrokesmod.utility.RotationUtils;
 import keystrokesmod.utility.Utils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import keystrokesmod.event.PreUpdateEvent;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
