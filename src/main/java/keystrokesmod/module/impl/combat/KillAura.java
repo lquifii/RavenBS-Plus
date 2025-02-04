@@ -66,7 +66,7 @@ public class KillAura extends Module {
     private ButtonSetting silentSwing;
     private ButtonSetting weaponOnly;
 
-    private String[] autoBlockModes = new String[] { "Manual", "Vanilla", "Fake", "Partial", "Interact A", "Interact B", "Interact C", "Interact D" };
+    private String[] autoBlockModes = new String[] { "Manual", "Vanilla", "Fake", "Partial", "Interact A", "Interact B", "Buffer A", "Buffer B" };
     private String[] rotationModes = new String[] { "Silent", "Lock view", "None" };
     private String[] sortModes = new String[] { "Distance", "Health", "Hurttime", "Yaw" };
 
@@ -734,8 +734,8 @@ public class KillAura extends Module {
             case 2: // fake
             case 4: // interact a
             case 5: // interact b
-            case 6: // interact c
-            case 7: // interact d
+            case 6: // buffer a
+            case 7: // buffer b
                 Reflection.setItemInUse(this.blockingClient = blockState);
                 break;
             case 3: // partial
@@ -889,7 +889,7 @@ public class KillAura extends Module {
                         break;
                 }
                 break;
-            case 6: // interact c
+            case 6: // buffer a
                 if (interactTicks >= 3) {
                     interactTicks = 0;
                 }
@@ -910,7 +910,7 @@ public class KillAura extends Module {
                         break;
                 }
                 break;
-            case 7: // interact d
+            case 7: // buffer b
                 if (interactTicks >= 3) {
                     interactTicks = 0;
                 }

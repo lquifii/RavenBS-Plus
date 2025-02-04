@@ -348,6 +348,8 @@ public class Scaffold extends Module {
                     if (pitch < minPitch && Utils.getHorizontalSpeed() < 0.6) {
                         pitch = minPitch;
                     }
+                    // Adjust pitch to look down more
+                    pitch += 10.0f;
                     if (firstStroke == 0) {
                         strokeDelay = 400;
                     }
@@ -355,6 +357,8 @@ public class Scaffold extends Module {
                     firstStroke = System.currentTimeMillis();
                     yawOffset = 0;
                     pitch = minPitch;
+                    // Adjust pitch to look down more
+                    pitch += 10.0f;
                     strokeDelay = 200;
                 }
 

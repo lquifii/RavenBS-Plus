@@ -31,6 +31,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -48,6 +49,18 @@ public class ClickGui extends GuiScreen {
     public int originalScale;
     public int previousScale;
     private static boolean isNotFirstOpen;
+
+    private String clientName = "raven bs";
+    private String clientVersion = "plus";
+    private String developer = "key, lquifi, tinywifi";
+    private int color = (new Color(57, 146, 229)).getRGB();
+
+    private boolean clickGuiOpen = false;
+    private long openedTime;
+
+    public float updates;
+    public long last;
+    private float cached;
 
     public ClickGui() {
         categories = new ArrayList();
@@ -93,6 +106,7 @@ public class ClickGui extends GuiScreen {
         this.previousScale = (int) Gui.guiScale.getInput();
     }
 
+    @Override
     public void drawScreen(int x, int y, float p) {
         if (Gui.backgroundBlur.getInput() != 0) {
             BlurUtils.prepareBlur();
@@ -113,7 +127,7 @@ public class ClickGui extends GuiScreen {
             this.drawCenteredString(this.fontRendererObj, "v", wd - w_c, h - 5, Utils.getChroma(2L, 900L));
             this.drawCenteredString(this.fontRendererObj, "e", wd - w_c, h + 5, Utils.getChroma(2L, 600L));
             this.drawCenteredString(this.fontRendererObj, "n", wd - w_c, h + 15, Utils.getChroma(2L, 300L));
-            this.drawCenteredString(this.fontRendererObj, "bS", wd + 1 + w_c, h + 30, Utils.getChroma(2L, 0L));
+            this.drawCenteredString(this.fontRendererObj, "bS+", wd + 1 + w_c, h + 30, Utils.getChroma(2L, 0L));
             this.drawVerticalLine(wd - 10 - w_c, h - 30, h + 43, Color.white.getRGB());
             this.drawVerticalLine(wd + 10 + w_c, h - 30, h + 43, Color.white.getRGB());
             if (this.logoSmoothLength != null) {
@@ -141,6 +155,7 @@ public class ClickGui extends GuiScreen {
             GlStateManager.popMatrix();
         }
 
+        onRenderTick(p);
 
         if (CommandLine.opened) {
             if (!this.commandLineSend.visible) {
@@ -170,6 +185,81 @@ public class ClickGui extends GuiScreen {
         else if (CommandLine.closed) {
             CommandLine.closed = false;
         }
+    }
+
+    private void onRenderTick(float partialTicks) {
+        if (!clickGuiOpen && this.mc.currentScreen instanceof ClickGui) {
+            clickGuiOpen = true;
+            initTimer(500.0F);
+            startTimer();
+            openedTime = System.currentTimeMillis();
+        } else if (!(this.mc.currentScreen instanceof ClickGui)) {
+            clickGuiOpen = false;
+        } else {
+            int[] displaySize = {this.width, this.height};
+            int y = displaySize[1] + (8 - getValueInt(0, 30, 2));
+
+            this.fontRendererObj.drawString(clientName + "-" + clientVersion, 4, y, color, true);
+
+            long elapsedTime = System.currentTimeMillis() - openedTime + 50L;
+            int characterIndex = (int) (elapsedTime / 200L);
+            y += this.fontRendererObj.FONT_HEIGHT + 1;
+
+            if (characterIndex < developer.length()) {
+                String obfuscated = "";
+
+                for (int i = 0; i < developer.length(); ++i) {
+                    char currentChar = i < characterIndex 
+                        ? developer.charAt(i)
+                        : (char) ((new Random()).nextInt(26) + 'a');
+                    obfuscated += currentChar;
+                }
+
+                this.fontRendererObj.drawString("devs. " + obfuscated, 4, y, color, true);
+            } else {
+                this.fontRendererObj.drawString("devs. " + developer, 4, y, color, true);
+            }
+        }
+    }
+
+    public void initTimer(float updates) {
+        this.updates = updates;
+    }
+
+    public void startTimer() {
+        this.cached = 0.0F;
+        this.last = System.currentTimeMillis();
+    }
+
+    public float getValueFloat(float begin, float end, int type) {
+        if (this.cached == end) {
+            return this.cached;
+        } else {
+            float t = (float) (System.currentTimeMillis() - this.last) / this.updates;
+            switch (type) {
+                case 1:
+                    t = t < 0.5F ? 4.0F * t * t * t : (t - 1.0F) * (2.0F * t - 2.0F) * (2.0F * t - 2.0F) + 1.0F;
+                    break;
+                case 2:
+                    t = (float) (1.0D - Math.pow((double) (1.0F - t), 5.0D));
+                    break;
+            }
+
+            float value = begin + t * (end - begin);
+            if ((end > begin && value > end) || (end < begin && value < end)) {
+                value = end;
+            }
+
+            if (value == end) {
+                this.cached = value;
+            }
+
+            return value;
+        }
+    }
+
+    public int getValueInt(int begin, int end, int type) {
+        return Math.round(this.getValueFloat((float) begin, (float) end, type));
     }
 
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
