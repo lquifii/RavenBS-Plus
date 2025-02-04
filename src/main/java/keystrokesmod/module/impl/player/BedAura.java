@@ -219,7 +219,7 @@ public class BedAura extends Module {
     }
 
     public boolean cancelKnockback() {
-        return this.isEnabled() && this.currentBlock != null && this.cancelKnockback.isToggled();
+        return cancelKnockback.isToggled() && currentBlock != null && RotationUtils.inRange(currentBlock, range.getInput());
     }
 
     private BlockPos[] getBedPos() {

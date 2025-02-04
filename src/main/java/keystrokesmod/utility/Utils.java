@@ -537,8 +537,8 @@ public class Utils {
     public static void correctValue(SliderSetting c, SliderSetting d) {
         if (c.getInput() > d.getInput()) {
             double p = c.getInput();
-            c.setValue(d.getInput());
-            d.setValue(p);
+            c.setValueWithEvent(d.getInput());
+            d.setValueWithEvent(p);
         }
     }
 

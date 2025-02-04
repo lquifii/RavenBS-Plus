@@ -175,13 +175,13 @@ public class Commands {
 
                 switch (args[1]) {
                     case "fly":
-                        Fly.horizontalSpeed.setValueRaw(value);
+                        Fly.horizontalSpeed.setValueRawWithEvent(value);
                         break;
                     case "bhop":
-                        BHop.speedSetting.setValueRaw(value);
+                        BHop.speedSetting.setValueRawWithEvent(value);
                         break;
                     case "speed":
-                        Speed.speed.setValueRaw(value);
+                        Speed.speed.setValueRawWithEvent(value);
                         break;
                     default:
                         print(invSyn, 1);
@@ -218,11 +218,11 @@ public class Commands {
                 switch (args[1]) {
                     case "horizontal":
                     case "h":
-                        Velocity.horizontal.setValueRaw(value);
+                        Velocity.horizontal.setValueRawWithEvent(value);
                         break;
                     case "vertical":
                     case "v":
-                        Velocity.vertical.setValueRaw(value);
+                        Velocity.vertical.setValueRawWithEvent(value);
                         break;
                     default:
                         print(invSyn, 1);

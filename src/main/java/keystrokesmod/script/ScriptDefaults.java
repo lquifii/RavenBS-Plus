@@ -4,6 +4,7 @@ import keystrokesmod.Raven;
 import keystrokesmod.clickgui.ClickGui;
 import keystrokesmod.clickgui.components.impl.CategoryComponent;
 import keystrokesmod.clickgui.components.impl.ModuleComponent;
+import keystrokesmod.event.PostSetSliderEvent;
 import keystrokesmod.mixin.impl.accessor.*;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
@@ -38,6 +39,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.realms.RealmsBridge;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.*;
+import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
@@ -847,7 +849,8 @@ public class ScriptDefaults {
             if (setting == null) {
                 return;
             }
-            setting.setValue(value);
+            double prev = setting.getInput();
+            setting.setValueWithEvent(value);
         }
 
         public void setKey(String moduleName, String name, int code) {

@@ -1,7 +1,9 @@
 package keystrokesmod.module.setting.impl;
 
 import com.google.gson.JsonObject;
+import keystrokesmod.event.PostSetSliderEvent;
 import keystrokesmod.module.setting.Setting;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -109,14 +111,25 @@ public class SliderSetting extends Setting {
         return this.max;
     }
 
-    public void setValue(double n) {
-        n = correctValue(n, this.min, this.max);
-        n = (double) Math.round(n * (1.0D / this.intervals)) / (1.0D / this.intervals);
-        this.defaultValue = n;
+    public double setValue(double newValue) {
+        newValue = correctValue(newValue, this.min, this.max);
+        newValue = (double) Math.round(newValue * (1.0D / this.intervals)) / (1.0D / this.intervals);
+        return this.defaultValue = newValue;
+    }
+
+    public void setValueWithEvent(double newValue) {
+        double prev = this.defaultValue;
+        MinecraftForge.EVENT_BUS.post(new PostSetSliderEvent(prev, this.setValue(newValue)));
     }
 
     public void setValueRaw(double n) {
         this.defaultValue = n;
+    }
+
+    public void setValueRawWithEvent(double n) {
+        double prev = this.defaultValue;
+        this.defaultValue = n;
+        MinecraftForge.EVENT_BUS.post(new PostSetSliderEvent(prev, n));
     }
 
     public static double correctValue(double v, double i, double a) {

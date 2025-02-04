@@ -125,7 +125,7 @@ public class SliderComponent extends Component {
         }
     }
 
-    public void onProfileLoad() {
+    public void onSliderChange() {
         double initial = (sliderSetting.getInput() == -1 && sliderSetting.canBeDisabled) ? -1 : sliderSetting.getInput();
 
         this.targetValue = initial;

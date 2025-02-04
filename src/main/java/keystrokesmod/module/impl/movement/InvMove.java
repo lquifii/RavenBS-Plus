@@ -83,7 +83,7 @@ public class InvMove extends Module {
                         slowedMotion = 0.615;
                         break;
                     case 2:
-                        slowedMotion = 0.568;
+                        slowedMotion = 0.3;
                         break;
                 }
                 Utils.setSpeed(Utils.getHorizontalSpeed() * (slowWhenNecessary.isToggled() ? slowedMotion : motion.getInput()));

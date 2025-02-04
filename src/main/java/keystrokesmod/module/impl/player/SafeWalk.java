@@ -18,7 +18,6 @@ public class SafeWalk extends Module {
     private SliderSetting motion;
     private ButtonSetting sneak;
     public static ButtonSetting blocksOnly, pitchCheck, disableOnForward;
-    public ButtonSetting tower;
 
     private int unsneakDelayTicks = 0;
     private boolean isSneaking;
@@ -31,7 +30,6 @@ public class SafeWalk extends Module {
         this.registerSetting(disableOnForward = new ButtonSetting("Disable on forward", false));
         this.registerSetting(pitchCheck = new ButtonSetting("Pitch check", false));
         this.registerSetting(sneak = new ButtonSetting("Sneak", false));
-        this.registerSetting(tower = new ButtonSetting("Tower", false));
     }
 
     @Override

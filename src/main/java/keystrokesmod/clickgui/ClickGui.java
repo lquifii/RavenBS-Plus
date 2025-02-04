@@ -420,10 +420,10 @@ public class ClickGui extends GuiScreen {
         return false;
     }
 
-    public void onProfileLoad() {
+    public void onSliderChange() {
         for (CategoryComponent c : categories) {
             for (ModuleComponent m : c.getModules()) {
-                m.onProfileLoad();
+                m.onSliderChange();
             }
         }
     }

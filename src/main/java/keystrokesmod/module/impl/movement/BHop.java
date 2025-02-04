@@ -62,6 +62,9 @@ public class BHop extends Module {
         if (ModuleManager.scaffold.moduleEnabled && (ModuleManager.tower.canTower() || ModuleManager.scaffold.fastScaffoldKeepY)) {
             return;
         }
+        if (!Utils.isMoving()) {
+            return;
+        }
         if (mode.getInput() >= 1) {
             if (mc.thePlayer.isCollidedHorizontally) {
                 collided = true;

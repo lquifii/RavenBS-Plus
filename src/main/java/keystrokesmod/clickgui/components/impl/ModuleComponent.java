@@ -195,10 +195,10 @@ public class ModuleComponent extends Component {
         }
     }
 
-    public void onProfileLoad() {
+    public void onSliderChange() {
         for (Component c : this.settings) {
             if (c instanceof SliderComponent) {
-                ((SliderComponent) c).onProfileLoad();
+                ((SliderComponent) c).onSliderChange();
             }
         }
     }

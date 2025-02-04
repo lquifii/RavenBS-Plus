@@ -23,6 +23,9 @@ public class PacketMappings {
         minecraftToScriptC.put(C0FPacketConfirmTransaction.class, C0F.class);
         minecraftToScriptC.put(C0EPacketClickWindow.class, C0E.class);
         minecraftToScriptC.put(C03PacketPlayer.class, C03.class);
+        minecraftToScriptC.put(C03PacketPlayer.C04PacketPlayerPosition.class, C03.class);
+        minecraftToScriptC.put(C03PacketPlayer.C05PacketPlayerLook.class, C03.class);
+        minecraftToScriptC.put(C03PacketPlayer.C06PacketPlayerPosLook.class, C03.class);
         minecraftToScriptC.put(C07PacketPlayerDigging.class, C07.class);
         minecraftToScriptC.put(C08PacketPlayerBlockPlacement.class, C08.class);
         minecraftToScriptC.put(C09PacketHeldItemChange.class, C09.class);
@@ -47,6 +50,9 @@ public class PacketMappings {
         minecraftToScriptS.put(S45PacketTitle.class, S45.class);
         minecraftToScriptS.put(S0BPacketAnimation.class, S0B.class);
         minecraftToScriptS.put(S14PacketEntity.class, S14.class);
+        minecraftToScriptS.put(S14PacketEntity.S15PacketEntityRelMove.class, S14.class);
+        minecraftToScriptS.put(S14PacketEntity.S16PacketEntityLook.class, S14.class);
+        minecraftToScriptS.put(S14PacketEntity.S17PacketEntityLookMove.class, S14.class);
         minecraftToScriptS.put(S04PacketEntityEquipment.class, S04.class);
     }
 }

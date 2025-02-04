@@ -8,6 +8,7 @@ import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.setting.impl.ButtonSetting;
 import keystrokesmod.module.setting.impl.KeySetting;
 import keystrokesmod.module.setting.impl.SliderSetting;
+import keystrokesmod.utility.ModHelper;
 import keystrokesmod.utility.Utils;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -97,17 +98,6 @@ public class LongJump extends Module {
         disabled();
     }
 
-    /*public boolean onChat(String chatMessage) {
-        String msg = util.strip(chatMessage);
-
-        if (msg.equals("Build height limit reached!")) {
-            client.print("fb fly build height");
-            modules.disable(scriptName);
-            return false;
-        }
-        return true;
-    }*/
-
     @SubscribeEvent
     public void onPreUpdate(PreUpdateEvent e) {
         if (manual.isToggled()) {
@@ -123,6 +113,17 @@ public class LongJump extends Module {
         if (manual.isToggled() && disableKey.isPressed() && Utils.jumpDown()) {
             function = false;
             disabled();
+        }
+
+        if (!function) {
+            if (manual.isToggled() && !enabled) {
+                if (ModHelper.threwFireballLow) {
+                    ModuleManager.velocity.disable = true;
+                    ModuleManager.antiKnockback.disable = true;
+                    enabled();
+                }
+            }
+            return;
         }
 
         if (enabled) {
@@ -348,14 +349,11 @@ public class LongJump extends Module {
     }
 
     // only apply horizontal boost once
-    void modifyHorizontal() {
+    private void modifyHorizontal() {
         if (boostSetting.getInput() != 0) {
-            //client.print("&7horizontal &b" + boostTicks + " " + client.getPlayer().getHurtTime());
-
             double speed = boostSetting.getInput() - Utils.randomizeDouble(0.0001, 0);
             if (Utils.isMoving()) {
                 Utils.setSpeed(speed);
-                //Utils.sendMessage("og speed");
             }
         }
     }
