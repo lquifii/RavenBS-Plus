@@ -50,7 +50,7 @@ public class Scaffold extends Module {
 
     private String[] rotationModes = new String[] { "None", "Simple", "Offset", "Precise" };
     private String[] sprintModes = new String[] { "None", "Vanilla", "Float" };
-    private String[] fastScaffoldModes = new String[] { "None", "Jump B", "Jump C", "Jump D", "Keep-Y", "Keep-Y B", "Jump A" };
+    private String[] fastScaffoldModes = new String[] { "None", "Jump B", "Jump C", "Jump D", "NoAscend", "NoAscend Low", "Jump A" };
     private String[] multiPlaceModes = new String[] { "Disabled", "1 extra", "2 extra" };
 
     public Map<BlockPos, Timer> highlight = new HashMap<>();
