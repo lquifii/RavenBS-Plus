@@ -7,7 +7,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @SideOnly(Side.CLIENT)
-@Mixin(EntityPlayer.class)
+@Mixin(value =EntityPlayer.class, priority = 999)
 public interface IAccessorEntityPlayer {
     @Accessor("itemInUseCount")
     void setItemInUseCount(int count);

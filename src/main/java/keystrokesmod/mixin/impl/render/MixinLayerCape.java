@@ -3,6 +3,7 @@ package keystrokesmod.mixin.impl.render;
 import keystrokesmod.module.impl.client.Settings;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.layers.LayerCape;
 import net.minecraft.entity.player.EnumPlayerModelParts;
@@ -15,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @SideOnly(Side.CLIENT)
-@Mixin(LayerCape.class)
+@Mixin(value = LayerCape.class,priority = 999)
 public class MixinLayerCape {
     @Shadow
     private final RenderPlayer playerRenderer;

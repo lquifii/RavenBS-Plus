@@ -23,7 +23,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Map;
 
-@Mixin(EntityLivingBase.class)
+@Mixin(value = EntityLivingBase.class, priority = 999)
 public abstract class MixinEntityLivingBase extends Entity {
     public MixinEntityLivingBase(World worldIn) {
         super(worldIn);

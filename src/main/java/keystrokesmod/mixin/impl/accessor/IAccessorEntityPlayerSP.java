@@ -6,7 +6,7 @@ import net.minecraft.client.entity.*;
 import org.spongepowered.asm.mixin.gen.*;
 
 @SideOnly(Side.CLIENT)
-@Mixin(EntityPlayerSP.class)
+@Mixin(value = EntityPlayerSP.class, priority = 999)
 public interface IAccessorEntityPlayerSP {
     @Accessor("lastReportedPosX")
     double getLastReportedPosX();

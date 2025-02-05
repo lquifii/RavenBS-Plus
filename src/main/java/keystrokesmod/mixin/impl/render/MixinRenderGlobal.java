@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @SideOnly(Side.CLIENT)
-@Mixin(RenderGlobal.class)
+@Mixin(value = RenderGlobal.class,priority = 999)
 public class MixinRenderGlobal { // credit: pablolnmak
     @Shadow
     @Final
