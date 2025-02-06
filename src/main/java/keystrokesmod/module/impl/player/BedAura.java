@@ -137,9 +137,6 @@ public class BedAura extends Module {
                 noAutoBlockTicks = -3;
                 return;
             case -3:
-                noAutoBlockTicks = -4;
-                return;
-            case -4:
                 stopAutoblock = false;
                 noAutoBlockTicks = 0;
                 return;
@@ -193,7 +190,7 @@ public class BedAura extends Module {
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onRenderWorld(RenderWorldLastEvent renderWorldLastEvent) {
+    public void onRenderWorld(RenderWorldLastEvent e) {
         if (!renderOutline.isToggled() || currentBlock == null || !Utils.nullCheck()) {
             return;
         }

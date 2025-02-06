@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @SideOnly(Side.CLIENT)
-@Mixin(value = RenderManager.class,priority = 999)
+@Mixin(RenderManager.class)
 public class MixinRenderManager {
     @Unique
     private float cachedPrevRotationPitch;

@@ -20,10 +20,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @SideOnly(Side.CLIENT)
-@Mixin(value = RenderGlobal.class,priority = 999)
+@Mixin(RenderGlobal.class)
 public class MixinRenderGlobal { // credit: pablolnmak
     @Shadow
-    @Final
     private Minecraft mc;
 
     @Unique

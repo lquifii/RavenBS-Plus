@@ -4,6 +4,7 @@ import keystrokesmod.Raven;
 import keystrokesmod.clickgui.ClickGui;
 import keystrokesmod.clickgui.components.impl.CategoryComponent;
 import keystrokesmod.clickgui.components.impl.ModuleComponent;
+import keystrokesmod.event.PostProfileLoadEvent;
 import keystrokesmod.event.PostSetSliderEvent;
 import keystrokesmod.mixin.impl.accessor.*;
 import keystrokesmod.module.Module;
@@ -849,8 +850,7 @@ public class ScriptDefaults {
             if (setting == null) {
                 return;
             }
-            double prev = setting.getInput();
-            setting.setValueWithEvent(value);
+            setting.setValueRawWithEvent(value);
         }
 
         public void setKey(String moduleName, String name, int code) {

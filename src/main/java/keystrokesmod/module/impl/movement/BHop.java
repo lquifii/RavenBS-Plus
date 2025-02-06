@@ -2,6 +2,7 @@ package keystrokesmod.module.impl.movement;
 
 import keystrokesmod.event.PostPlayerInputEvent;
 import keystrokesmod.event.PreMotionEvent;
+import keystrokesmod.event.PreUpdateEvent;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.combat.KillAura;
@@ -10,7 +11,6 @@ import keystrokesmod.module.setting.impl.SliderSetting;
 import keystrokesmod.utility.RotationUtils;
 import keystrokesmod.utility.Utils;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import keystrokesmod.event.PreUpdateEvent;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
@@ -33,7 +33,7 @@ public class BHop extends Module {
         this.registerSetting(liquidDisable = new ButtonSetting("Disable in liquid", true));
         this.registerSetting(sneakDisable = new ButtonSetting("Disable while sneaking", true));
         this.registerSetting(rotateYaw = new ButtonSetting("Rotate yaw", false));
-        this.registerSetting(airStrafe = new ButtonSetting("4-Tick AirStrafe", false));
+        this.registerSetting(airStrafe = new ButtonSetting("4 Tick AirStrafe", false));
     }
 
     @Override
@@ -200,7 +200,9 @@ public class BHop extends Module {
         return mc.theWorld.getBlockState(blockPos).getBlock();
     }
 
+    @Override
     public void onDisable() {
         hopping = false;
+        Strafies = 0;
     }
 }

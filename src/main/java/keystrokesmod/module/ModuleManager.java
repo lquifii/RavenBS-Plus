@@ -43,6 +43,7 @@ public class ModuleManager {
     public static Module reach;
     public static NoRotate noRotate;
     public static BedESP bedESP;
+    public static Blink blink;
     public static Chams chams;
     public static HUD hud;
     public static Timer timer;
@@ -74,7 +75,7 @@ public class ModuleManager {
         this.addModule(autoClicker = new AutoClicker());
         this.addModule(longJump = new LongJump());
         this.addModule(new AimAssist());
-        this.addModule(new Blink());
+        this.addModule(blink = new Blink());
         this.addModule(new BurstClicker());
         this.addModule(weather = new Weather());
         this.addModule(chatCommands = new ChatCommands());

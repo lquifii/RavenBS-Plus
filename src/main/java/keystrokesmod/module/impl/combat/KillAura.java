@@ -17,6 +17,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityGiantZombie;
 import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -66,7 +67,7 @@ public class KillAura extends Module {
     private ButtonSetting silentSwing;
     private ButtonSetting weaponOnly;
 
-    private String[] autoBlockModes = new String[] { "Manual", "Vanilla", "Fake", "Partial", "Interact A", "Interact B", "Buffer A", "Buffer B" };
+    private String[] autoBlockModes = new String[] { "Manual", "Vanilla", "Fake", "Partial", "Interact A", "Interact B", "Interact C", "Interact D" };
     private String[] rotationModes = new String[] { "Silent", "Lock view", "None" };
     private String[] sortModes = new String[] { "Distance", "Health", "Hurttime", "Yaw" };
 
@@ -417,12 +418,15 @@ public class KillAura extends Module {
     }
 
     public void onCustomMouse(int button, boolean state) {
-        if (blinkAutoBlock() || autoBlockMode.getInput() == 3 || rotationMode.getInput() != 0) {
+        if (autoBlockMode.getInput() == 3 || rotationMode.getInput() != 0) {
             return;
         }
         if (button == 1) {
             if (state) {
                 if (target != null) {
+                    if (blinkAutoBlock()) {
+                        return;
+                    }
                     if (basicCondition() && settingCondition()) {
                         if (!ModuleManager.bedAura.rotate) {
                             if (isLookingAtEntity()) {
@@ -441,6 +445,9 @@ public class KillAura extends Module {
                 }
             }
             else {
+                if (blinkAutoBlock()) {
+                    return;
+                }
                 KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
                 Reflection.setItemInUse(blockingClient = false);
                 sendUnBlock = true;
@@ -449,6 +456,9 @@ public class KillAura extends Module {
         else if (button == 0) {
             if (!state) {
                 delayTicks = 1;
+            }
+            if (blinkAutoBlock()) {
+                return;
             }
             if (mc.currentScreen == null && state && mc.objectMouseOver != null && mc.objectMouseOver.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK && !Mouse.isButtonDown(1)) {
                 KeyBinding.setKeyBindState(mc.gameSettings.keyBindAttack.getKeyCode(), true);
@@ -704,6 +714,9 @@ public class KillAura extends Module {
                 return !golems.getOrDefault(entityCreature.getEntityId(), false);
             }
         }
+        else if (entityCreature instanceof EntityPigZombie && Utils.getBedwarsStatus() != 2) {
+            return false;
+        }
         return hostileMobs.contains(entityCreature);
     }
 
@@ -734,8 +747,8 @@ public class KillAura extends Module {
             case 2: // fake
             case 4: // interact a
             case 5: // interact b
-            case 6: // buffer a
-            case 7: // buffer b
+            case 6: // interact c
+            case 7: // interact d
                 Reflection.setItemInUse(this.blockingClient = blockState);
                 break;
             case 3: // partial
@@ -889,7 +902,7 @@ public class KillAura extends Module {
                         break;
                 }
                 break;
-            case 6: // buffer a
+            case 6: // interact c
                 if (interactTicks >= 3) {
                     interactTicks = 0;
                 }
@@ -910,7 +923,7 @@ public class KillAura extends Module {
                         break;
                 }
                 break;
-            case 7: // buffer b
+            case 7: // interact d
                 if (interactTicks >= 3) {
                     interactTicks = 0;
                 }

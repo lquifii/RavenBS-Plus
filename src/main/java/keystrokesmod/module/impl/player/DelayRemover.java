@@ -9,7 +9,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class DelayRemover extends Module {
-    public static ButtonSetting oldReg, removeJumpTicks;
+    public ButtonSetting oldReg, removeJumpTicks;
 
     public DelayRemover() {
         super("Delay Remover", category.player, 0);
@@ -19,8 +19,8 @@ public class DelayRemover extends Module {
     }
 
     @SubscribeEvent
-    public void onTick(final TickEvent.PlayerTickEvent event) {
-        if (event.phase != TickEvent.Phase.END || !mc.inGameHasFocus || !Utils.nullCheck()) {
+    public void onTick(TickEvent.PlayerTickEvent e) {
+        if (e.phase != TickEvent.Phase.END || !mc.inGameHasFocus || !Utils.nullCheck()) {
             return;
         }
         if (oldReg.isToggled()) {

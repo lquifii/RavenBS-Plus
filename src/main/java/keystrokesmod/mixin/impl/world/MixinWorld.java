@@ -1,4 +1,4 @@
-package keystrokesmod.mixin.impl.client;
+package keystrokesmod.mixin.impl.world;
 
 import keystrokesmod.module.ModuleManager;
 import net.minecraft.util.MathHelper;

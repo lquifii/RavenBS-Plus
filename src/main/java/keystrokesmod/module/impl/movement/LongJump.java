@@ -15,6 +15,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
@@ -46,6 +48,7 @@ public class LongJump extends Module {
     private boolean notMoving;
     private boolean enabled;
     public boolean function;
+    private Double startY;
 
     private int boostTicks;
     private int lastSlot = -1;
@@ -96,6 +99,16 @@ public class LongJump extends Module {
 
     public void onDisable() {
         disabled();
+    }
+
+    @SubscribeEvent
+    public void onCollision(CollisionEvent event) {
+        if (this.startY != null && !manual.isToggled() && boostTicks <= 0) {
+            BlockPos blockPos = event.blockPos;
+            if (event.block.isPassable(mc.theWorld, blockPos) && blockPos.getY() <= this.startY) {
+                event.boundingBox = new AxisAlignedBB(blockPos.getX() - 2.0D, blockPos.getY() - 1.0D, blockPos.getZ() - 2.0D, blockPos.getX() + 2.0D, blockPos.getY() + 1.0D, blockPos.getZ() + 2.0D);
+            }
+        }
     }
 
     @SubscribeEvent
@@ -304,6 +317,7 @@ public class LongJump extends Module {
         ModuleManager.bHop.disable();
 
         stopModules = true;
+        startY = mc.thePlayer.posY;
     }
 
     private void disabled() {
@@ -314,6 +328,7 @@ public class LongJump extends Module {
         if (!manual.isToggled()) {
             disable();
         }
+        startY = null;
     }
 
     private int setupFireballSlot(boolean pre) {
@@ -348,7 +363,6 @@ public class LongJump extends Module {
         return 0;
     }
 
-    // only apply horizontal boost once
     private void modifyHorizontal() {
         if (boostSetting.getInput() != 0) {
             double speed = boostSetting.getInput() - Utils.randomizeDouble(0.0001, 0);

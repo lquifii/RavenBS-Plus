@@ -1,5 +1,6 @@
 package keystrokesmod.module.impl.player;
 
+import keystrokesmod.event.PreUpdateEvent;
 import keystrokesmod.event.SendPacketEvent;
 import keystrokesmod.mixin.impl.accessor.IAccessorMinecraft;
 import keystrokesmod.module.Module;
@@ -12,8 +13,6 @@ import net.minecraft.item.ItemEnderPearl;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 
 public class FastPlace extends Module {
     public SliderSetting tickDelay;
@@ -30,36 +29,33 @@ public class FastPlace extends Module {
     }
 
     @SubscribeEvent
-    public void onPlayerTick(PlayerTickEvent e) {
-        if (e.phase == Phase.END) {
-            if (ModuleManager.scaffold.stopFastPlace()) {
+    public void onPreUpdate(PreUpdateEvent e) {
+        if (ModuleManager.scaffold.stopFastPlace()) {
+            return;
+        }
+        if (Utils.nullCheck() && mc.inGameHasFocus) {
+            if (blocksOnly.isToggled()) {
+                ItemStack item = mc.thePlayer.getHeldItem();
+                if (item == null || !(item.getItem() instanceof ItemBlock)) {
+                    return;
+                }
+            }
+            if (pitchCheck.isToggled() && mc.thePlayer.rotationPitch < 70.0f) {
                 return;
             }
-            if (Utils.nullCheck() && mc.inGameHasFocus) {
-                if (blocksOnly.isToggled()) {
-                    ItemStack item = mc.thePlayer.getHeldItem();
-                    if (item == null || !(item.getItem() instanceof ItemBlock)) {
-                        return;
-                    }
-                }
-                if (pitchCheck.isToggled() && mc.thePlayer.rotationPitch < 70.0f) {
+            if (disablePearl.isToggled() && mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemEnderPearl) {
+                return;
+            }
+            int delay = (int) tickDelay.getInput();
+            if (delay == 0) {
+                ((IAccessorMinecraft) mc).setRightClickDelayTimer(0);
+            }
+            else {
+                if (delay == 4) {
                     return;
                 }
-                if (disablePearl.isToggled() && mc.thePlayer.getHeldItem() != null && mc.thePlayer.getHeldItem().getItem() instanceof ItemEnderPearl) {
-                    return;
-                }
-                int c = (int) tickDelay.getInput();
-                if (c == 0) {
-                    ((IAccessorMinecraft) mc).setRightClickDelayTimer(0);
-                }
-                else {
-                    if (c == 4) {
-                        return;
-                    }
-
-                    if (((IAccessorMinecraft) mc).getRightClickDelayTimer() == 4) {
-                        ((IAccessorMinecraft) mc).setRightClickDelayTimer(c);
-                    }
+                if (((IAccessorMinecraft) mc).getRightClickDelayTimer() == 4) {
+                    ((IAccessorMinecraft) mc).setRightClickDelayTimer(delay);
                 }
             }
         }

@@ -82,7 +82,7 @@ public class BedWars extends Module {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onRenderWorld(RenderWorldLastEvent e) {
-        if (Utils.nullCheck()) {
+        if (Utils.nullCheck() && obsidian.isToggled()) {
             if (this.obsidianPos.isEmpty()) {
                 return;
             }
