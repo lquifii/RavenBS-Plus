@@ -67,7 +67,7 @@ public class KillAura extends Module {
     private ButtonSetting silentSwing;
     private ButtonSetting weaponOnly;
 
-    private String[] autoBlockModes = new String[] { "Manual", "Vanilla", "Fake", "Partial", "Interact A", "Interact B", "Interact C", "Interact D" };
+    private String[] autoBlockModes = new String[] { "Manual", "Vanilla", "Fake", "Partial", "Interact A", "Interact B", "Buffer A", "Buffer B" };
     private String[] rotationModes = new String[] { "Silent", "Lock view", "None" };
     private String[] sortModes = new String[] { "Distance", "Health", "Hurttime", "Yaw" };
 
@@ -177,7 +177,7 @@ public class KillAura extends Module {
 
     @SubscribeEvent
     public void onPreUpdate(PreUpdateEvent e) {
-        wasUsing = mc.thePlayer.isUsingItem();
+        wasUsing = mc.gameSettings.keyBindUseItem.isKeyDown();
         if (mc.currentScreen == null || mc.currentScreen.allowUserInput) {
             boolean pressedLeft = Mouse.isButtonDown(0);
             if (pressedLeft && !lastPressedLeft) {
@@ -383,7 +383,7 @@ public class KillAura extends Module {
         slot = Math.floorMod(mc.thePlayer.inventory.currentItem - slot, 9);
         ItemStack stack = mc.thePlayer.inventory.getStackInSlot(slot);
         if (stack != null && stack.getItem() instanceof ItemSword && wasUsing && Utils.lookingAtBlock()) {
-            delayTicks = 1;
+            onSwapSlot();
             if (Raven.debug) {
                 Utils.sendModuleMessage(this, "&7Scroll swap detected, setting delay to &b" + delayTicks + "&7. (&d" + mc.thePlayer.ticksExisted + "&7)");
             }
@@ -394,7 +394,7 @@ public class KillAura extends Module {
     public void onSlotUpdate(SlotUpdateEvent e) {
         ItemStack stack = mc.thePlayer.inventory.getStackInSlot(e.slot);
         if (stack != null && stack.getItem() instanceof ItemSword && wasUsing && Utils.lookingAtBlock()) {
-            delayTicks = 1;
+            onSwapSlot();
             if (Raven.debug) {
                 Utils.sendModuleMessage(this, "&7Swap detected, setting delay to &b" + delayTicks + "&7. (&d" + mc.thePlayer.ticksExisted + "&7)");
             }
@@ -414,6 +414,13 @@ public class KillAura extends Module {
             if (Raven.debug) {
                 Utils.sendModuleMessage(this, "&7mob stopped attack player");
             }
+        }
+    }
+
+    public void onSwapSlot() {
+        delayTicks = 1;
+        if (autoBlockMode.getInput() > 0 && !manualBlock()) {
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
         }
     }
 
@@ -445,12 +452,11 @@ public class KillAura extends Module {
                 }
             }
             else {
-                if (blinkAutoBlock()) {
-                    return;
-                }
                 KeyBinding.setKeyBindState(mc.gameSettings.keyBindUseItem.getKeyCode(), false);
-                Reflection.setItemInUse(blockingClient = false);
-                sendUnBlock = true;
+                if (!blinkAutoBlock()) {
+                    Reflection.setItemInUse(blockingClient = false);
+                    sendUnBlock = true;
+                }
             }
         }
         else if (button == 0) {
