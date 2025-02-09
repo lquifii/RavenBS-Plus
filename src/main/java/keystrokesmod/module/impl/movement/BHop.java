@@ -38,7 +38,11 @@ public class BHop extends Module {
 
     @Override
     public String getInfo() {
-        return modes[(int) mode.getInput()];
+        String info = modes[(int) mode.getInput()];
+        if (airStrafe.isToggled()) {
+            info += " AirStrafe";
+        }
+        return info;
     }
 
     @SubscribeEvent

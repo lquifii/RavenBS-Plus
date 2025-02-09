@@ -4,6 +4,7 @@ import keystrokesmod.module.Module;
 import keystrokesmod.module.ModuleManager;
 import keystrokesmod.module.impl.combat.AntiKnockback;
 import keystrokesmod.module.impl.combat.Velocity;
+import keystrokesmod.module.impl.movement.BHop;
 import keystrokesmod.module.setting.impl.ButtonSetting;
 import keystrokesmod.module.setting.impl.DescriptionSetting;
 import keystrokesmod.module.setting.impl.SliderSetting;
@@ -21,6 +22,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent.RenderTickEvent;
 
 import java.awt.*;
 import java.io.IOException;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.client.resources.I18n;
+import net.minecraft.potion.Potion;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class HUD extends Module {
     public static SliderSetting theme;
@@ -35,6 +43,7 @@ public class HUD extends Module {
     public static ButtonSetting showInfo;
     public static ButtonSetting showWatermark;
     public static ButtonSetting showArrayList;
+    public static ButtonSetting showPotionEffects;
     public static int posX = 5;
     public static int posY = 70;
     private boolean isAlphabeticalSort;
@@ -60,6 +69,7 @@ public class HUD extends Module {
         this.registerSetting(removeScripts = new ButtonSetting("Remove scripts", false));
         this.registerSetting(showInfo = new ButtonSetting("Show module info", true));
         this.registerSetting(showWatermark = new ButtonSetting("Show Watermark", true));
+        this.registerSetting(showPotionEffects = new ButtonSetting("Show Potion Effects", true));
     }
 
     public void onEnable() {
@@ -128,6 +138,9 @@ public class HUD extends Module {
                         String moduleName = module.getNameInHud();
                         if (module instanceof AntiKnockback) {
                             moduleName = "Velocity";
+                        }
+                        if (module instanceof BHop) {
+                            moduleName = "Bhop";
                         }
                         if (showInfo.isToggled() && !module.getInfo().isEmpty()) {
                             moduleName += " §7" + module.getInfo();
@@ -218,6 +231,45 @@ public class HUD extends Module {
                     mc.fontRendererObj.drawString(String.valueOf(c), currentX, y, remainingColor, true);
                 }
                 currentX += mc.fontRendererObj.getStringWidth(String.valueOf(c));
+            }
+
+            // Display potion effects below the watermark
+            y += textHeight + 4;
+
+            if (showPotionEffects.isToggled() && !mc.thePlayer.getActivePotionEffects().isEmpty()) {
+                List<PotionEffect> sortedEffects = mc.thePlayer.getActivePotionEffects().stream()
+                        .sorted(Comparator.comparing(effect -> I18n.format(effect.getEffectName())))
+                        .collect(Collectors.toList());
+
+                boolean firstEffect = true;
+                for (PotionEffect effect : sortedEffects) {
+                    String effectName = I18n.format(effect.getEffectName()) + " " + (effect.getAmplifier() + 1);
+                    String effectDuration = Potion.getDurationString(effect);
+                    String effectText = effectName + " §7[" + effectDuration + "]";
+                    int effectColor = Theme.getGradient((int) theme.getInput(), n2);
+                    int effectXPos = 6; // Fixed position, not affected by alignRight
+                    if (drawBackground.isToggled()) {
+                        RenderUtils.drawRect(effectXPos - 1, y - 1, effectXPos + mc.fontRendererObj.getStringWidth(effectText) + 0.5, y + mc.fontRendererObj.FONT_HEIGHT + 1, backGroundColor);
+                    }
+                    if (outline.getInput() == 1) {
+                        if (firstEffect) { // top
+                            RenderUtils.drawRect(effectXPos - 2, y - 2, effectXPos + mc.fontRendererObj.getStringWidth(effectText) + 1.5, y - 1, effectColor);
+                            firstEffect = false;
+                        }
+                        // sides
+                        RenderUtils.drawRect(effectXPos - 2, y - 1, effectXPos - 1, y + mc.fontRendererObj.FONT_HEIGHT + 1, effectColor);
+                        RenderUtils.drawRect(effectXPos + mc.fontRendererObj.getStringWidth(effectText) + 0.5, y - 1, effectXPos + mc.fontRendererObj.getStringWidth(effectText) + 1.5, y + mc.fontRendererObj.FONT_HEIGHT + 1, effectColor);
+                        // bottom
+                        RenderUtils.drawRect(effectXPos - 2, y + mc.fontRendererObj.FONT_HEIGHT + 1, effectXPos + mc.fontRendererObj.getStringWidth(effectText) + 1.5, y + mc.fontRendererObj.FONT_HEIGHT + 2, effectColor);
+                    }
+                    mc.fontRendererObj.drawString(effectText, effectXPos, (float) y, effectColor, true);
+                    previousModule = effectText;
+                    lastXPos = effectXPos;
+                    y += mc.fontRendererObj.FONT_HEIGHT + 2;
+                }
+                if (outline.getInput() == 1) { // bottom
+                    RenderUtils.drawRect(lastXPos - 2, y - 1, lastXPos + mc.fontRendererObj.getStringWidth(previousModule) + 1.5, y, Theme.getGradient((int) theme.getInput(), n2));
+                }
             }
         }
     }
@@ -344,6 +396,9 @@ public class HUD extends Module {
                             String moduleName = module.getNameInHud();
                             if (module instanceof AntiKnockback) {
                                 moduleName = "Velocity";
+                            }
+                            if (module instanceof BHop) {
+                                moduleName = "Bhop";
                             }
                             if (showInfo.isToggled() && !module.getInfo().isEmpty()) {
                                 moduleName += " §7" + module.getInfo();
