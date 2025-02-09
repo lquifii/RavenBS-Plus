@@ -14,7 +14,7 @@ public enum Theme {
     Grayscale(new Color(240, 240, 240), new Color(110, 110, 110)), // 6
     Royal(new Color(125, 204, 241), new Color(30, 71, 170)), // 7
     Sky(new Color(160, 230, 225), new Color(15, 190, 220)), // 8
-    Vine(new Color(17, 192, 45), new Color(201, 234, 198)); // 9
+    Vape(new Color(21, 137, 122), new Color(44, 72, 79)); // 9
 
     private final Color firstGradient;
     private final Color secondGradient;
@@ -59,5 +59,5 @@ public enum Theme {
         return new int[]{0, 0};
     }
 
-    public static String[] themes = new String[]{"Rainbow", "Cherry", "Cotton candy", "Flare", "Flower", "Gold", "Grayscale", "Royal", "Sky", "Vine"};
+    public static String[] themes = new String[]{"Rainbow", "Cherry", "Cotton candy", "Flare", "Flower", "Gold", "Grayscale", "Royal", "Sky", "Vape"};
 }

@@ -209,7 +209,7 @@ public class ClickGui extends GuiScreen {
                 String obfuscated = "";
 
                 for (int i = 0; i < developer.length(); ++i) {
-                    char currentChar = i < characterIndex 
+                    char currentChar = i < characterIndex
                         ? developer.charAt(i)
                         : (char) ((new Random()).nextInt(26) + 'a');
                     obfuscated += currentChar;

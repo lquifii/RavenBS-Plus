@@ -23,7 +23,7 @@ public class BHop extends Module {
     public ButtonSetting rotateYaw;
     private ButtonSetting airStrafe;
     private int Strafies;
-    public String[] modes = new String[] {"Strafe", "Ground", "8 tick", "7 tick"};
+    public String[] modes = new String[] {"Strafe", "Ground", "7 tick", "8 tick", "9 tick"};
     public boolean hopping, lowhop, didMove, collided, setRotation;
 
     public BHop() {
@@ -119,23 +119,6 @@ public class BHop extends Module {
 
                     if (mc.thePlayer.hurtTime == 0 && !collided) {
                         switch (simpleY) {
-                            case 13:
-                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.02483;
-                                break;
-                            case 2000:
-                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.1913;
-                                didMove = false;
-                                break;
-                        }
-                    }
-                }
-                break;
-            case 3:
-                if (mode.getInput() == 3 && didMove) {
-                    int simpleY = (int) Math.round((e.posY % 1) * 10000);
-
-                    if (mc.thePlayer.hurtTime == 0 && !collided) {
-                        switch (simpleY) {
                             case 4200:
                                 mc.thePlayer.motionY = 0.39;
                                 lowhop = true;
@@ -148,6 +131,38 @@ public class BHop extends Module {
                                 mc.thePlayer.motionY = mc.thePlayer.motionY - 0.2;
                                 didMove = false;
                                 break;
+                        }
+                    }
+                }
+                break;
+            case 3:
+                if (mode.getInput() == 3 && didMove) {
+                    int simpleY = (int) Math.round((e.posY % 1) * 10000);
+
+                    if (mc.thePlayer.hurtTime == 0 && !collided) {
+                        switch (simpleY) {
+                            case 13:
+                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.02483;
+                                break;
+                            case 2000:
+                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.1913;
+                                didMove = false;
+                                break;
+                        }
+                    }
+                }
+                break;
+            case 4:
+                if (mode.getInput() == 4 && didMove) {
+                    int simpleY = (int) Math.round((e.posY % 1) * 10000);
+
+                    if (mc.thePlayer.hurtTime == 0 && !collided) {
+                        switch (simpleY) {
+                            case 13 :
+                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.02483;
+                                break;
+                            case 2000:
+                                mc.thePlayer.motionY = mc.thePlayer.motionY - 0.16874;
                         }
                     }
                 }

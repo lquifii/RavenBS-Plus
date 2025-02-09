@@ -34,7 +34,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Scaffold extends Module {
-    private final SliderSetting motion;
+    private final SliderSetting sprintScaffoldMotion;
+    private final SliderSetting fastScaffoldMotion;
     public SliderSetting rotation;
     private SliderSetting sprint;
     private SliderSetting fastScaffold;
@@ -47,10 +48,11 @@ public class Scaffold extends Module {
     public ButtonSetting safeWalk;
     public ButtonSetting showBlockCount;
     private ButtonSetting silentSwing;
+    public ButtonSetting sprintScaffoldOnSpeed;
 
     private String[] rotationModes = new String[] { "None", "Simple", "Offset", "Precise" };
     private String[] sprintModes = new String[] { "None", "Vanilla", "Float" };
-    private String[] fastScaffoldModes = new String[] { "None", "Jump A", "Jump B", "Jump C", "NoAscend A", "NoAscend B", "NoAscend C" };
+    private String[] fastScaffoldModes = new String[] { "None", "Keep-Y A", "Keep-Y B", "Keep-Y C", "Same-Y A", "Same-Y B", "Same-Y C" };
     private String[] multiPlaceModes = new String[] { "Disabled", "1 extra", "2 extra" };
 
     public Map<BlockPos, Timer> highlight = new HashMap<>();
@@ -105,7 +107,8 @@ public class Scaffold extends Module {
 
     public Scaffold() {
         super("Scaffold", category.player);
-        this.registerSetting(motion = new SliderSetting("Motion", "x", 1.0, 0.5, 1.2, 0.01));
+        this.registerSetting(sprintScaffoldMotion = new SliderSetting("Sprint Scaffold Motion", "x", 1.0, 0.5, 1.2, 0.01));
+        this.registerSetting(fastScaffoldMotion = new SliderSetting("Fast Scaffold Motion", "x", 1.0, 0.5, 1.2, 0.01));
         this.registerSetting(rotation = new SliderSetting("Rotation", 1, rotationModes));
         this.registerSetting(sprint = new SliderSetting("Sprint mode", 0, sprintModes));
         this.registerSetting(fastScaffold = new SliderSetting("Fast scaffold", 0, fastScaffoldModes));
@@ -118,6 +121,7 @@ public class Scaffold extends Module {
         this.registerSetting(safeWalk = new ButtonSetting("Safewalk", true));
         this.registerSetting(showBlockCount = new ButtonSetting("Show block count", true));
         this.registerSetting(silentSwing = new ButtonSetting("Silent swing", false));
+        this.registerSetting(sprintScaffoldOnSpeed = new ButtonSetting("Sprint Scaffold on Speed", false));
 
         this.alwaysOn = true;
     }
@@ -693,7 +697,7 @@ public class Scaffold extends Module {
     }
 
     private boolean usingFastScaffold() {
-        return fastScaffold.getInput() > 0 && (!fastOnRMB.isToggled() || Mouse.isButtonDown(1) && Utils.tabbedIn());
+        return fastScaffold.getInput() > 0 && (!fastOnRMB.isToggled() || Mouse.isButtonDown(1) && Utils.tabbedIn()) && !(sprintScaffoldOnSpeed.isToggled() && (Utils.getSpeedAmplifier() == 1 || Utils.getSpeedAmplifier() == 2));
     }
 
     public boolean safewalk() {
@@ -943,11 +947,16 @@ public class Scaffold extends Module {
     }
 
     private void handleMotion() {
-        if (ModuleManager.tower.canTower() || !mc.thePlayer.onGround || motion.getInput() == 1) {
+        if (ModuleManager.tower.canTower() || !mc.thePlayer.onGround) {
             return;
         }
-        mc.thePlayer.motionX *= motion.getInput();
-        mc.thePlayer.motionZ *= motion.getInput();
+        if (usingFastScaffold()) {
+            mc.thePlayer.motionX *= fastScaffoldMotion.getInput();
+            mc.thePlayer.motionZ *= fastScaffoldMotion.getInput();
+        } else {
+            mc.thePlayer.motionX *= sprintScaffoldMotion.getInput();
+            mc.thePlayer.motionZ *= sprintScaffoldMotion.getInput();
+        }
     }
 
     public float hardcodedYaw() {
