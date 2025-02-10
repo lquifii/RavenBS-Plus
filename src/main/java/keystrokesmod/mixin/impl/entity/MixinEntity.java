@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @SideOnly(Side.CLIENT)
-@Mixin(value = Entity.class, priority = 999)
+@Mixin(Entity.class)
 public abstract class MixinEntity {
     @Shadow
     public double motionX;

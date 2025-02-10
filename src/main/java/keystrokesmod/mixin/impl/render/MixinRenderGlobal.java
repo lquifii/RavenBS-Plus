@@ -23,6 +23,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(RenderGlobal.class)
 public class MixinRenderGlobal { // credit: pablolnmak
     @Shadow
+    @Final
     private Minecraft mc;
 
     @Unique
