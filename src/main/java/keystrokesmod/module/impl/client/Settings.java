@@ -35,7 +35,7 @@ public class Settings extends Module {
     public static SliderSetting offset;
     public static SliderSetting timeMultiplier;
 
-    private String[] capes = new String[] { "None", "Anime", "Aqua", "Green", "Purple", "Red", "White", "Yellow", "Myau", "Astolfo", "Vape", "Dash", "Anime2", "DreamySky" , "Zambos" };
+    private String[] capes = new String[] { "None", "Anime", "Aqua", "Green", "Purple", "Red", "White", "Yellow", "Myau", "Astolfo", "Vape", "Dash", "Anime2", "DreamySky", "Zambos" }; 
     public static List<ResourceLocation> loadedCapes = new ArrayList<>();
 
     public Settings() {
