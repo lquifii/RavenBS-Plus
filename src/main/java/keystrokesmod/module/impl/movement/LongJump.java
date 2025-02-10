@@ -395,4 +395,8 @@ public class LongJump extends Module {
         if (notMoving) return true;
         return temporaryFlightKey.isPressed();
     }
+
+    public String getInfo() {
+        return modes[(int) mode.getInput()];
+    }
 }

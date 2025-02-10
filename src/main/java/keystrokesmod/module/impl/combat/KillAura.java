@@ -142,10 +142,7 @@ public class KillAura extends Module {
 
     @Override
     public String getInfo() {
-        if (rotationMode.getInput() == 2) { // None, return FOV if rotation mode is none
-            return String.valueOf((int) this.fov.getInput());
-        }
-        return rotationModes[(int) rotationMode.getInput()];
+        return autoBlockModes[(int) autoBlockMode.getInput()];
     }
 
     @Override

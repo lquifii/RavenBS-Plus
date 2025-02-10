@@ -151,6 +151,10 @@ public class InvMove extends Module {
         }
     }
 
+    public String getInfo() {
+        return inventoryModes[(int) inventory.getInput()];
+    }
+
     private void reset() {
         ticks = 0;
         setMotion = false;
