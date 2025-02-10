@@ -14,6 +14,14 @@ import net.minecraft.network.play.client.C08PacketPlayerBlockPlacement;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
+import net.minecraft.block.Block;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.Entity;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.Vec3;
+import java.util.List;
+import java.util.Collection;
 
 public class NoSlow extends Module {
     public static SliderSetting mode;
@@ -23,12 +31,20 @@ public class NoSlow extends Module {
     public static ButtonSetting swordOnly;
     public static ButtonSetting vanillaSword;
 
-    private String[] modes = new String[] { "Vanilla", "Pre", "Post", "Alpha", "Float" };
+    private String[] modes = new String[] { "Vanilla", "Pre", "Post", "Alpha", "Float", "Myau" };
 
     private boolean postPlace;
     private boolean canFloat;
     private boolean reSendConsume;
     public boolean noSlowing;
+
+    private int tick = 0;
+    private int goldenAppleSlot = -1;
+    private boolean isWaitingForSwitchBack = false;
+    private boolean hasConsumedGoldenApple = false;
+    private boolean loop = false;
+    private int tickjump = 0;
+    private boolean meow = false;
 
     public NoSlow() {
         super("NoSlow", category.movement, 0);
@@ -42,9 +58,23 @@ public class NoSlow extends Module {
     }
 
     @Override
+    public void onEnable() {
+        tick = 0;
+        goldenAppleSlot = -1;
+        isWaitingForSwitchBack = false;
+        hasConsumedGoldenApple = false;
+        loop = false;
+        tickjump = 0;
+        meow = false;
+    }
+
+    @Override
     public void onDisable() {
         resetFloat();
         noSlowing = false;
+        if (mode.getInput() == 5) { // Myau mode
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindJump.getKeyCode(), true);
+        }
     }
 
     public void onUpdate() {
@@ -195,5 +225,89 @@ public class NoSlow extends Module {
             return false;
         }
         return true;
+    }
+
+    public void onPreUpdate() {
+        if (mode.getInput() == 5) { // Myau mode
+            EntityPlayerSP player = mc.thePlayer;
+
+            if (player.isUsingItem()) {
+                if (loop && !meow && player.isUsingItem() && (mc.gameSettings.keyBindForward.isKeyDown() || mc.gameSettings.keyBindBack.isKeyDown())) {
+                    tickjump = 28;
+                    meow = true;
+                }
+
+                if (meow && tickjump > 0) {
+                    Vec3 pos = player.getPositionVector();
+                    double[][] offsets = {
+                        {0, 0},
+                        {0.3, 0.3},
+                        {-0.3, 0.3},
+                        {0.3, -0.3},
+                        {-0.3, -0.3}
+                    };
+
+                    for (double[] offset : offsets) {
+                        double x = pos.xCoord + offset[0];
+                        double z = pos.zCoord + offset[1];
+
+                        Block blockAtFeet = mc.theWorld.getBlockState(new BlockPos(x, pos.yCoord, z)).getBlock();
+                        Block blockBelow = mc.theWorld.getBlockState(new BlockPos(x, pos.yCoord - 1, z)).getBlock();
+
+                        if (blockAtFeet.getUnlocalizedName().toLowerCase().contains("stairs") || blockAtFeet.getUnlocalizedName().toLowerCase().contains("slab") ||
+                            blockBelow.getUnlocalizedName().toLowerCase().contains("stairs") || blockBelow.getUnlocalizedName().toLowerCase().contains("slab")) {
+                            
+                            player.setPosition(pos.xCoord, pos.yCoord + 0.000000000009, pos.zCoord);
+                            return;
+                        }
+                    }
+                }
+
+                if (goldenAppleSlot == -1) {
+                    goldenAppleSlot = findGoldenAppleSlot();
+                }
+            }
+
+            Collection<PotionEffect> effects = player.getActivePotionEffects();
+            boolean foundRegeneration = false;
+            for (PotionEffect effect : effects) {
+                if (effect.getEffectName().equals("regeneration") && (effect.getDuration() == 98 || effect.getDuration() == 99 || effect.getDuration() == 100)) {
+                    foundRegeneration = true;
+                    break;
+                }
+            }
+
+            if (foundRegeneration && !hasConsumedGoldenApple) {
+                hasConsumedGoldenApple = true;
+                mc.thePlayer.inventory.currentItem = 0;
+                tick = 3;
+                isWaitingForSwitchBack = true;
+            }
+
+            if (isWaitingForSwitchBack) {
+                if (tick > 0) {
+                    tick--;
+                } else {
+                    if (goldenAppleSlot != -1) {
+                        mc.thePlayer.inventory.currentItem = goldenAppleSlot;
+                        this.toggle();
+                    } else {
+                        System.out.println("No golden apple slot found to switch back to.");
+                    }
+                    isWaitingForSwitchBack = false;
+                }
+            }
+        }
+    }
+
+    private int findGoldenAppleSlot() {
+        for (int slot = 0; slot < 9; slot++) {
+            ItemStack item = mc.thePlayer.inventory.getStackInSlot(slot);
+            if (item != null && item.getDisplayName().toLowerCase().contains("golden_apple")) {
+                loop = true;
+                return slot;
+            }
+        }
+        return -1;
     }
 }
