@@ -33,7 +33,7 @@ public class BHop extends Module {
         this.registerSetting(liquidDisable = new ButtonSetting("Disable in liquid", true));
         this.registerSetting(sneakDisable = new ButtonSetting("Disable while sneaking", true));
         this.registerSetting(rotateYaw = new ButtonSetting("Rotate yaw", false));
-        this.registerSetting(airStrafe = new ButtonSetting("AirStrafe", false));
+        this.registerSetting(airStrafe = new ButtonSetting("Strafe In Air", false));
     }
 
     @Override
