@@ -40,6 +40,7 @@ public class PacketMappings {
         minecraftToScriptS.put(S3EPacketTeams.class, S3E.class);
         minecraftToScriptS.put(S08PacketPlayerPosLook.class, S08.class);
         minecraftToScriptS.put(S2APacketParticles.class, S2A.class);
+        minecraftToScriptS.put(S25PacketBlockBreakAnim.class, S25.class);
         minecraftToScriptS.put(S06PacketUpdateHealth.class, S06.class);
         minecraftToScriptS.put(S23PacketBlockChange.class, S23.class);
         minecraftToScriptS.put(S29PacketSoundEffect.class, S29.class);

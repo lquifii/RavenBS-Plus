@@ -36,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Scaffold extends Module {
     private final SliderSetting sprintScaffoldMotion;
     private final SliderSetting fastScaffoldMotion;
+    private final SliderSetting fastScaffoldAirMotion;
     public SliderSetting rotation;
     private SliderSetting sprint;
     private SliderSetting fastScaffold;
@@ -109,6 +110,7 @@ public class Scaffold extends Module {
         super("Scaffold", category.player);
         this.registerSetting(sprintScaffoldMotion = new SliderSetting("Sprint Scaffold Motion", "x", 1.0, 0.5, 1.2, 0.01));
         this.registerSetting(fastScaffoldMotion = new SliderSetting("Fast Scaffold Motion", "x", 1.0, 0.5, 1.2, 0.01));
+        this.registerSetting(fastScaffoldAirMotion = new SliderSetting("Fast Scaffold Air Motion", "x", 1.0, 0.5, 1.2, 0.01));
         this.registerSetting(rotation = new SliderSetting("Rotation", 1, rotationModes));
         this.registerSetting(sprint = new SliderSetting("Sprint mode", 0, sprintModes));
         this.registerSetting(fastScaffold = new SliderSetting("Fast scaffold", 0, fastScaffoldModes));
@@ -947,10 +949,13 @@ public class Scaffold extends Module {
     }
 
     private void handleMotion() {
-        if (ModuleManager.tower.canTower() || !mc.thePlayer.onGround) {
+        if (ModuleManager.tower.canTower()) {
             return;
         }
-        if (usingFastScaffold()) {
+        if (!mc.thePlayer.onGround) {
+            mc.thePlayer.motionX *= fastScaffoldAirMotion.getInput();
+            mc.thePlayer.motionZ *= fastScaffoldAirMotion.getInput();
+        } else if (usingFastScaffold()) {
             mc.thePlayer.motionX *= fastScaffoldMotion.getInput();
             mc.thePlayer.motionZ *= fastScaffoldMotion.getInput();
         } else {

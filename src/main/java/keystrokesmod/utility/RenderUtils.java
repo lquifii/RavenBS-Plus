@@ -221,7 +221,7 @@ public class RenderUtils {
 
     public static void renderEntity(Entity e, int type, double expand, double shift, int color, boolean damage) {
         if (e instanceof EntityLivingBase) {
-            float partialTicks = ((IAccessorMinecraft) mc).getTimer().renderPartialTicks;;
+            float partialTicks = ((IAccessorMinecraft) mc).getTimer().renderPartialTicks;
             double x = e.lastTickPosX + (e.posX - e.lastTickPosX) * (double) partialTicks - mc.getRenderManager().viewerPosX;
             double y = e.lastTickPosY + (e.posY - e.lastTickPosY) * (double) partialTicks - mc.getRenderManager().viewerPosY;
             double z = e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * (double) partialTicks - mc.getRenderManager().viewerPosZ;
@@ -273,7 +273,7 @@ public class RenderUtils {
                     net.minecraft.client.gui.Gui.drawRect(i + 1, 0, i + 3, b, hc);
                     GlStateManager.enableDepth();
                 } else if (type == 6) {
-                    d3p(x, y, z, 0.699999988079071D, 45, 1.5F, color, color == 0);
+                    drawCircle(x, y, z, 0.699999988079071D, 45, 1.5F, color, color == 0);
                 } else {
                     if (color == 0) {
                         color = Utils.getChroma(2L, 0L);
@@ -850,6 +850,8 @@ public class RenderUtils {
             radius = Math.min(radius, width / 2.0f);
         }
 
+        radius = Math.min(radius, 4.0f); // Increase the radius value
+
         x *= 2.0;
         y *= 2.0;
         x2 *= 2.0;
@@ -921,6 +923,8 @@ public class RenderUtils {
             radius = Math.min(radius, width / 2.0f);
         }
 
+        radius = Math.min(radius, 4.0f); // Increase the radius value
+
         glEnable(3042);
         GL11.glDisable(3553);
         GL11.glBlendFunc(770, 771);
@@ -987,5 +991,86 @@ public class RenderUtils {
         int rgba = (alphaInt << 24) | (red << 16) | (green << 8) | blue;
 
         return rgba;
+    }
+
+    public static void drawGradientRect(int left, int top, float right, int bottom, int startColor, int endColor) {
+        float startAlpha = (startColor >> 24 & 255) / 255.0F;
+        float startRed = (startColor >> 16 & 255) / 255.0F;
+        float startGreen = (startColor >> 8 & 255) / 255.0F;
+        float startBlue = (startColor & 255) / 255.0F;
+        float endAlpha = (endColor >> 24 & 255) / 255.0F;
+        float endRed = (endColor >> 16 & 255) / 255.0F;
+        float endGreen = (endColor >> 8 & 255) / 255.0F;
+        float endBlue = (endColor & 255) / 255.0F;
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glDisable(GL11.GL_ALPHA_TEST);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glShadeModel(GL11.GL_SMOOTH);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+        worldrenderer.pos(right, top, 0.0D).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        worldrenderer.pos(left, top, 0.0D).color(startRed, startGreen, startBlue, startAlpha).endVertex();
+        worldrenderer.pos(left, bottom, 0.0D).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+        worldrenderer.pos(right, bottom, 0.0D).color(endRed, endGreen, endBlue, endAlpha).endVertex();
+        tessellator.draw();
+        GL11.glShadeModel(GL11.GL_FLAT);
+        GL11.glDisable(GL11.GL_BLEND);
+        GL11.glEnable(GL11.GL_ALPHA_TEST);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+    }
+
+    public static void drawCircle(double x, double y, double z, double radius, int sides, float lineWidth, int color, boolean chroma) {
+        float a = (float) (color >> 24 & 255) / 255.0F;
+        float r = (float) (color >> 16 & 255) / 255.0F;
+        float g = (float) (color >> 8 & 255) / 255.0F;
+        float b = (float) (color & 255) / 255.0F;
+        mc.entityRenderer.disableLightmap();
+        GL11.glDisable(3553);
+        glEnable(3042);
+        GL11.glBlendFunc(770, 771);
+        GL11.glDisable(2929);
+        glEnable(2848);
+        GL11.glDepthMask(false);
+        GL11.glLineWidth(lineWidth);
+        if (!chroma) {
+            GL11.glColor4f(r, g, b, a);
+        }
+
+        GL11.glBegin(1);
+        long d = 0L;
+        long ed = 15000L / (long) sides;
+        long hed = ed / 2L;
+
+        for (int i = 0; i < sides * 2; ++i) {
+            if (chroma) {
+                if (i % 2 != 0) {
+                    if (i == 47) {
+                        d = hed;
+                    }
+
+                    d += ed;
+                }
+
+                int c = Utils.getChroma(2L, d);
+                float r2 = (float) (c >> 16 & 255) / 255.0F;
+                float g2 = (float) (c >> 8 & 255) / 255.0F;
+                float b2 = (float) (c & 255) / 255.0F;
+                GL11.glColor3f(r2, g2, b2);
+            }
+
+            double angle = 6.283185307179586D * (double) i / (double) sides + Math.toRadians(180.0D);
+            GL11.glVertex3d(x + Math.cos(angle) * radius, y, z + Math.sin(angle) * radius);
+        }
+
+        GL11.glEnd();
+        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+        GL11.glDepthMask(true);
+        GL11.glDisable(2848);
+        glEnable(2929);
+        GL11.glDisable(3042);
+        glEnable(3553);
+        mc.entityRenderer.enableLightmap();
     }
 }

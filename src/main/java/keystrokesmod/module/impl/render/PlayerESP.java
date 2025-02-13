@@ -111,6 +111,7 @@ public class PlayerESP extends Module {
                         if (teamColor.isToggled()) {
                             rgb = Utils.getColorFromEntity(entity);
                         }
+                        rgb = Utils.mergeAlpha(rgb, 255);
                         this.render(entity, rgb);
                         this.renderAsTwoD.put((EntityLivingBase) entity, rgb);
                     }
@@ -132,6 +133,7 @@ public class PlayerESP extends Module {
                     if (teamColor.isToggled()) {
                         rgb = Utils.getColorFromEntity(player);
                     }
+                    rgb = Utils.mergeAlpha(rgb, 255);
                     this.render(player, rgb);
                     this.renderAsTwoD.put(player, rgb);
                 }

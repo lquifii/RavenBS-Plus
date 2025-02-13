@@ -27,7 +27,7 @@ import java.io.IOException;
 
 public class TargetHUD extends Module {
     private SliderSetting mode;
-    private SliderSetting theme;
+    public SliderSetting theme;
     private ButtonSetting renderEsp;
     private ButtonSetting showStatus;
     private ButtonSetting healthColor;
@@ -40,7 +40,7 @@ public class TargetHUD extends Module {
     public EntityLivingBase renderEntity;
     public int posX = 70;
     public int posY = 30;
-    private String[] modes = new String[]{ "Modern", "Legacy" };
+    private String[] modes = new String[]{ "Modern", "Legacy", "ModernRect" };
 
     public TargetHUD() {
         super("TargetHUD", category.render);
@@ -141,6 +141,16 @@ public class TargetHUD extends Module {
                 case 1:
                     RenderUtils.drawRoundedGradientOutlinedRectangle((float) n6, (float) n7, (float) n8, (float) (n9 + 13), 10.0f, Utils.mergeAlpha(Color.black.getRGB(), maxAlphaOutline), Utils.mergeAlpha(gradientColors[0], alpha), Utils.mergeAlpha(gradientColors[1], alpha));
                     break;
+                case 2:
+                    float bloomRadiusFlat = (fadeTimer == null) ? 2f : (2f * alpha / 255f);
+                    float blurRadiusFlat = (fadeTimer == null) ? 3 : (3f * alpha / 255f);
+                    BlurUtils.prepareBloom();
+                    RenderUtils.drawRect(n6, n7, n8, n9 + 13, new Color(0, 0, 0, maxAlphaBackground).getRGB());
+                    BlurUtils.bloomEnd(3, bloomRadiusFlat);
+                    BlurUtils.prepareBlur();
+                    RenderUtils.drawRect(n6, n7, n8, n9 + 13, Utils.mergeAlpha(Color.black.getRGB(), maxAlphaOutline));
+                    BlurUtils.blurEnd(2, blurRadiusFlat);
+                    break;
             }
             final int n13 = n6 + 6;
             final int n14 = n8 - 6;
@@ -181,6 +191,10 @@ public class TargetHUD extends Module {
                 case 1:
                     RenderUtils.drawRoundedGradientRect((float) n13, (float) n15, lastHealthBar, (float) (n15 + 5), 4.0f, mergedGradientLeft, mergedGradientLeft, mergedGradientRight, mergedGradientRight);
                     break;
+                case 2:
+                    RenderUtils.drawRect(n13, n15, lastHealthBar, n15 + 5, Utils.darkenColor(mergedGradientRight, 25));
+                    RenderUtils.drawGradientRect(n13, n15, smoothBack ? lastHealthBar : healthBar, n15 + 5, mergedGradientLeft, mergedGradientRight);
+                    break;
             }
             GL11.glPushMatrix();
             GL11.glEnable(GL11.GL_BLEND);
@@ -199,6 +213,10 @@ public class TargetHUD extends Module {
         target = null;
         healthBarTimer = null;
         renderEntity = null;
+    }
+
+    public String getInfo() {
+        return modes[(int) mode.getInput()];
     }
 
     class EditScreen extends GuiScreen {
