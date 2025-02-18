@@ -146,7 +146,7 @@ public class SliderComponent extends Component {
 
     @Override
     public boolean onClick(int mouseX, int mouseY, int button) {
-        if ((u(mouseX, mouseY) || i(mouseX, mouseY)) && button == 0 && this.moduleComponent.isOpened) {
+        if ((u(mouseX, mouseY) || i(mouseX, mouseY)) && button == 0 && this.moduleComponent.isOpened && this.visible && this.sliderSetting.visible) {
             this.heldDown = true;
         }
         return false;

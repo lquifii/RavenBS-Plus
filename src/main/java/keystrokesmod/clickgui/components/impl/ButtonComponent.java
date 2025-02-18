@@ -4,7 +4,6 @@ import keystrokesmod.Raven;
 import keystrokesmod.clickgui.components.Component;
 import keystrokesmod.module.Module;
 import keystrokesmod.module.setting.impl.ButtonSetting;
-import keystrokesmod.utility.RenderUtils;
 import keystrokesmod.utility.profile.ProfileModule;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
@@ -52,7 +51,7 @@ public class ButtonComponent extends Component {
     }
 
     public boolean onClick(int x, int y, int b) {
-        if (this.i(x, y) && b == 0 && this.p.isOpened) {
+        if (this.i(x, y) && b == 0 && this.p.isOpened && this.visible && this.buttonSetting.visible) {
             if (this.buttonSetting.isMethodButton) {
                 this.buttonSetting.runMethod();
                 return false;

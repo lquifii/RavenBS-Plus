@@ -13,7 +13,6 @@ val mcVersion: String by project
 val version: String by project
 val mixinGroup = "$baseGroup.mixin"
 val modid: String by project
-val transformerFile = file("src/main/resources/accesstransformer.cfg")
 
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
@@ -38,10 +37,6 @@ loom {
     forge {
         pack200Provider.set(dev.architectury.pack200.java.Pack200Adapter())
         mixinConfig("mixins.raven.json")
-        if (transformerFile.exists()) {
-            println("Installing access transformer")
-            accessTransformer(transformerFile)
-        }
     }
 
     mixin {
@@ -79,7 +74,7 @@ dependencies {
         exclude(module = "slf4j-api")
     }
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT")
-
+    shadowImpl("org.java-websocket:Java-WebSocket:1.6.0")
 }
 
 tasks.withType(JavaCompile::class) {
@@ -94,8 +89,6 @@ tasks.withType(org.gradle.jvm.tasks.Jar::class) {
 
         this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
         this["MixinConfigs"] = "mixins.raven.json"
-        if (transformerFile.exists())
-            this["FMLAT"] = "${modid}_at.cfg"
     }
 }
 

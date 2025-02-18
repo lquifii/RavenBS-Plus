@@ -21,6 +21,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -165,6 +166,13 @@ public class BedAura extends Module {
         }
         else if (e.getPacket() instanceof S27PacketExplosion) {
             e.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onWorldJoin(EntityJoinWorldEvent e) {
+        if (e.entity == mc.thePlayer) {
+            currentBlock = null;
         }
     }
 

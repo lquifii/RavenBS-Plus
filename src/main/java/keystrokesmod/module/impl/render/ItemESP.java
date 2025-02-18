@@ -21,8 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ItemESP extends Module { // entirely skidded from raven b4 source leak
-    private ButtonSetting renderIron, renderGold;
+public class ItemESP extends Module {
+    private final ButtonSetting renderIron;
+    private final ButtonSetting renderGold;
 
     public ItemESP() {
         super("ItemESP", category.render);
@@ -32,8 +33,9 @@ public class ItemESP extends Module { // entirely skidded from raven b4 source l
 
     @SubscribeEvent
     public void onRenderWorldLast(RenderWorldLastEvent e) {
-        HashMap<Item, ArrayList<EntityItem>> hashMap = new HashMap<>();
-        HashMap<Double, Integer> hashMap2 = new HashMap<>();
+        HashMap<Item, ArrayList<EntityItem>> itemsMap = new HashMap<>();
+        HashMap<Double, Integer> colorMap = new HashMap<>();
+
         for (Entity entity : mc.theWorld.loadedEntityList) {
             if (entity instanceof EntityItem) {
                 if (entity.ticksExisted < 3) {
@@ -43,124 +45,139 @@ public class ItemESP extends Module { // entirely skidded from raven b4 source l
                 if (entityItem.getEntityItem().stackSize == 0) {
                     continue;
                 }
-                Item getItem = entityItem.getEntityItem().getItem();
-                if (getItem == null) {
+                Item currentItem = entityItem.getEntityItem().getItem();
+                if (currentItem == null) {
                     continue;
                 }
+
                 int stackSize = entityItem.getEntityItem().stackSize;
-                double a = getColorForItem(getItem, entity.posX, entity.posY, entity.posZ);
-                Integer n = hashMap2.get(a);
-                int n2;
-                if (n == null) {
-                    n2 = stackSize;
-                    ArrayList<EntityItem> list = hashMap.get(getItem);
-                    if (list == null) {
-                        list = new ArrayList<>();
+                double colorDouble = getColorForItem(currentItem, entity.posX, entity.posY, entity.posZ);
+
+                Integer existingStackCount = colorMap.get(colorDouble);
+                int newStackCount;
+                if (existingStackCount == null) {
+                    newStackCount = stackSize;
+                    ArrayList<EntityItem> itemList = itemsMap.get(currentItem);
+                    if (itemList == null) {
+                        itemList = new ArrayList<>();
                     }
-                    list.add(entityItem);
-                    hashMap.put(getItem, list);
-                } else {
-                    n2 = n + stackSize;
+                    itemList.add(entityItem);
+                    itemsMap.put(currentItem, itemList);
                 }
-                hashMap2.put(a, n2);
+                else {
+                    newStackCount = existingStackCount + stackSize;
+                }
+                colorMap.put(colorDouble, newStackCount);
             }
         }
-        if (!hashMap.isEmpty()) {
+        if (!itemsMap.isEmpty()) {
             float renderPartialTicks = ((IAccessorMinecraft) mc).getTimer().renderPartialTicks;
-            for (Map.Entry<Item, ArrayList<EntityItem>> entry : hashMap.entrySet()) {
+            for (Map.Entry<Item, ArrayList<EntityItem>> entry : itemsMap.entrySet()) {
                 Item item = entry.getKey();
-                int n4;
-                int n3;
+                int boxColor;
+                int textColor;
                 if (item == Items.iron_ingot && renderIron.isToggled()) {
-                    n3 = (n4 = -1);
-                } else if (item == Items.gold_ingot && renderGold.isToggled()) {
-                    n4 = -331703;
-                    n3 = -152;
-                } else if (item == Items.diamond) {
-                    n4 = -10362113;
-                    n3 = -7667713;
-                } else {
+                    textColor = (boxColor = -1);
+                }
+                else if (item == Items.gold_ingot && renderGold.isToggled()) {
+                    boxColor = -331703;
+                    textColor = -152;
+                }
+                else if (item == Items.diamond) {
+                    boxColor = -10362113;
+                    textColor = -7667713;
+                }
+                else {
                     if (item != Items.emerald) {
                         continue;
                     }
-                    n4 = -15216030;
-                    n3 = -14614644;
+                    boxColor = -15216030;
+                    textColor = -14614644;
                 }
+
                 for (EntityItem entityItem2 : entry.getValue()) {
-                    double a2 = getColorForItem(item, entityItem2.posX, entityItem2.posY, entityItem2.posZ);
-                    double n5 = entityItem2.lastTickPosX + (entityItem2.posX - entityItem2.lastTickPosX) * renderPartialTicks;
-                    double n6 = entityItem2.lastTickPosY + (entityItem2.posY - entityItem2.lastTickPosY) * renderPartialTicks;
-                    double n7 = entityItem2.lastTickPosZ + (entityItem2.posZ - entityItem2.lastTickPosZ) * renderPartialTicks;
-                    EntityPlayer selfPlayer = (Freecam.freeEntity == null) ? mc.thePlayer : Freecam.freeEntity;
-                    double n8 = selfPlayer.lastTickPosX + (selfPlayer.posX - selfPlayer.lastTickPosX) * renderPartialTicks - n5;
-                    double n9 = selfPlayer.lastTickPosY + (selfPlayer.posY - selfPlayer.lastTickPosY) * renderPartialTicks - n6;
-                    double n10 = selfPlayer.lastTickPosZ + (selfPlayer.posZ - selfPlayer.lastTickPosZ) * renderPartialTicks - n7;
+                    double itemColor = getColorForItem(item, entityItem2.posX, entityItem2.posY, entityItem2.posZ);
+                    double interpolatedX = entityItem2.lastTickPosX + (entityItem2.posX - entityItem2.lastTickPosX) * renderPartialTicks;
+                    double interpolatedY = entityItem2.lastTickPosY + (entityItem2.posY - entityItem2.lastTickPosY) * renderPartialTicks;
+                    double interpolatedZ = entityItem2.lastTickPosZ + (entityItem2.posZ - entityItem2.lastTickPosZ) * renderPartialTicks;
+
+                    EntityPlayer self = (Freecam.freeEntity == null) ? mc.thePlayer : Freecam.freeEntity;
+                    double diffX = self.lastTickPosX + (self.posX - self.lastTickPosX) * renderPartialTicks - interpolatedX;
+                    double diffY = self.lastTickPosY + (self.posY - self.lastTickPosY) * renderPartialTicks - interpolatedY;
+                    double diffZ = self.lastTickPosZ + (self.posZ - self.lastTickPosZ) * renderPartialTicks - interpolatedZ;
+
+                    double dist = MathHelper.sqrt_double(diffX * diffX + diffY * diffY + diffZ * diffZ);
+
                     GlStateManager.pushMatrix();
-                    drawBox(n4, n3, hashMap2.get(a2), n5, n6, n7, MathHelper.sqrt_double(n8 * n8 + n9 * n9 + n10 * n10));
+                    drawBox(boxColor, textColor, colorMap.get(itemColor), interpolatedX, interpolatedY, interpolatedZ, dist);
                     GlStateManager.popMatrix();
                 }
             }
         }
     }
 
-    public double getColor(double n, double n2, double n3) {
-        if (n == 0.0) {
-            n = 1.0;
+    public double getColor(double x, double y, double z) {
+        if (x == 0.0) {
+            x = 1.0;
         }
-        if (n2 == 0.0) {
-            n2 = 1.0;
+        if (y == 0.0) {
+            y = 1.0;
         }
-        if (n3 == 0.0) {
-            n3 = 1.0;
+        if (z == 0.0) {
+            z = 1.0;
         }
-        return Math.round((n + 1.0) * Math.floor(n2) * (n3 + 2.0));
+        return Math.round((x + 1.0) * Math.floor(y) * (z + 2.0));
     }
 
-    private double getColorForItem(Item item, double n, double n2, double n3) {
-        double c = getColor(n, n2, n3);
+    private double getColorForItem(Item item, double x, double y, double z) {
+        double color = getColor(x, y, z);
         if (item == Items.iron_ingot) {
-            c += 0.155;
-        } else if (item == Items.gold_ingot) {
-            c += 0.255;
-        } else if (item == Items.diamond) {
-            c += 0.355;
-        } else if (item == Items.emerald) {
-            c += 0.455;
+            color += 0.155;
         }
-        return c;
+        else if (item == Items.gold_ingot) {
+            color += 0.255;
+        }
+        else if (item == Items.diamond) {
+            color += 0.355;
+        }
+        else if (item == Items.emerald) {
+            color += 0.455;
+        }
+        return color;
     }
 
-    public void drawBox(int n, int n2, int n3, double n4, double n5, double n6, double n7) {
-        n4 -= mc.getRenderManager().viewerPosX;
-        n5 -= mc.getRenderManager().viewerPosY;
-        n6 -= mc.getRenderManager().viewerPosZ;
+    public void drawBox(int boxColor, int textColor, int size, double posY, double posX, double posZ, double dist) {
+        posY -= mc.getRenderManager().viewerPosX;
+        posX -= mc.getRenderManager().viewerPosY;
+        posZ -= mc.getRenderManager().viewerPosZ;
         GL11.glPushMatrix();
-        GL11.glBlendFunc(770, 771);
-        GL11.glEnable(3042);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_BLEND);
         GL11.glLineWidth(2.0f);
-        GL11.glDisable(3553);
-        GL11.glDisable(2929);
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(false);
-        float n8 = (n >> 16 & 0xFF) / 255.0f;
-        float n9 = (n >> 8 & 0xFF) / 255.0f;
-        float n10 = (n & 0xFF) / 255.0f;
-        float min = Math.min(Math.max(0.2f, (float) (0.009999999776482582 * n7)), 0.4f);
-        RenderUtils.drawBoundingBox(new AxisAlignedBB(n4 - min, n5, n6 - min, n4 + min, n5 + min * 2.0f, n6 + min), n8, n9, n10, 0.35f);
-        GL11.glEnable(3553);
-        GL11.glEnable(2929);
+        float r = (boxColor >> 16 & 0xFF) / 255.0f;
+        float g = (boxColor >> 8 & 0xFF) / 255.0f;
+        float b = (boxColor & 0xFF) / 255.0f;
+
+        float radius = Math.min(Math.max(0.2f, (float) (0.009999999776482582 * dist)), 0.4f);
+        RenderUtils.drawBoundingBox(new AxisAlignedBB(posY - radius, posX, posZ - radius, posY + radius, posX + radius * 2.0f, posZ + radius), r, g, b, 0.35f);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(true);
-        GL11.glDisable(3042);
+        GL11.glDisable(GL11.GL_BLEND);
         GL11.glPopMatrix();
         GlStateManager.pushMatrix();
-        GlStateManager.translate((float) n4, (float) n5 + 0.3, (float) n6);
+        GlStateManager.translate((float) posY, (float) posX + 0.3, (float) posZ);
         GlStateManager.rotate(-mc.getRenderManager().playerViewY, 0.0f, 1.0f, 0.0f);
         GlStateManager.rotate((mc.gameSettings.thirdPersonView == 2 ? -1 : 1) * mc.getRenderManager().playerViewX, 1.0f, 0.0f, 0.0f);
-        float min2 = Math.min(Math.max(0.02266667f, (float) (0.001500000013038516 * n7)), 0.07f);
-        GlStateManager.scale(-min2, -min2, -min2);
+        float scale = Math.min(Math.max(0.02266667f, (float) (0.001500000013038516 * dist)), 0.07f);
+        GlStateManager.scale(-scale, -scale, -scale);
         GlStateManager.depthMask(false);
         GlStateManager.disableDepth();
-        String value = String.valueOf(n3);
-        mc.fontRendererObj.drawString(value, -(mc.fontRendererObj.getStringWidth(value) / 2) + min2 * 3.5f, -(123.805f * min2 - 2.47494f), n2, true);
+        String value = String.valueOf(size);
+        mc.fontRendererObj.drawString(value, -(mc.fontRendererObj.getStringWidth(value) / 2) + scale * 3.5f, -(123.805f * scale - 2.47494f), textColor, true);
         GlStateManager.enableDepth();
         GlStateManager.depthMask(true);
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);

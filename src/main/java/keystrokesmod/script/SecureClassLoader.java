@@ -1,24 +1,35 @@
 package keystrokesmod.script;
 
+import keystrokesmod.Raven;
+
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.List;
 
 public class SecureClassLoader extends URLClassLoader {
-    private List<String> restrictedClasses = Arrays.asList("java.nio", "java.net", "java.util.zip", "java.applet", "java.rmi", "java.security", "java.io.file", "java.lang.reflect", "java.lang.ref", "java.lang.thread", "java.io.buffer", "java.io.input", "java.io.read", "java.io.writer");
+    private static final List<String> WHITELISTED_PACKAGES = Arrays.asList("sun.reflect", "keystrokesmod", "java.lang", "java.util", "java.awt");
+
     public SecureClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
     }
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        boolean isRestricted = restrictedClasses.stream().anyMatch(name.toLowerCase()::startsWith);
-        boolean isExceptionClass = name.endsWith("Exception");
-
-        if (isRestricted && !isExceptionClass) {
+        if (!isClassSafe(name)) {
             throw new ClassNotFoundException("Unsafe class detected: " + name);
         }
         return super.loadClass(name, resolve);
+    }
+
+    private boolean isClassSafe(String name) {
+        boolean hasAllowedSuffix = name.endsWith("Exception") || name.endsWith("Throwable");
+
+        boolean isAllowedImport = Raven.scriptManager.imports.stream().anyMatch(prefix -> name.toLowerCase().startsWith(prefix));
+        boolean isScriptClass = name.startsWith("sc_") && !name.contains(".");
+
+        boolean isWhitelistedPackage = WHITELISTED_PACKAGES.stream().anyMatch(name::startsWith);
+
+        return hasAllowedSuffix || isAllowedImport || isScriptClass || isWhitelistedPackage;
     }
 }
