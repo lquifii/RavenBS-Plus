@@ -121,6 +121,10 @@ public class ScriptDefaults {
             Utils.sendRawMessage(s);
         }
 
+        public static void print(Message component) {
+            mc.thePlayer.addChatMessage(component.component);
+        }
+
         public static boolean isDiagonal() {
             return Utils.isDiagonal(false);
         }
@@ -263,8 +267,8 @@ public class ScriptDefaults {
             return mc.thePlayer.getItemInUseDuration();
         }
 
-        public static void log(String message) {
-            System.out.println(message);
+        public static void log(final Object obj) {
+            Utils.log.info(obj);
         }
 
         public static void setSneaking(boolean sneak) {
