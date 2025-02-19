@@ -107,7 +107,6 @@ public class Scaffold extends Module {
 
     public Scaffold() {
         super("Scaffold", category.player);
-        this.registerSetting(new DescriptionSetting("use 0.84 fast scaffold motion for working KeepY."));
         this.registerSetting(sprintScaffoldMotion = new SliderSetting("Sprint Scaffold Motion", "x", 1.0, 0.5, 1.2, 0.01));
         this.registerSetting(fastScaffoldMotion = new SliderSetting("Fast Scaffold Motion", "x", 1.0, 0.5, 1.2, 0.01));
         this.registerSetting(rotation = new SliderSetting("Rotation", 1, rotationModes));
