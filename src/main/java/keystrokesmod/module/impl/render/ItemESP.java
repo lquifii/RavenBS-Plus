@@ -83,6 +83,10 @@ public class ItemESP extends Module {
                     boxColor = -331703;
                     textColor = -152;
                 }
+                else if (item == Items.golden_apple) {
+                    boxColor = -331703;
+                    textColor = -152;
+                }
                 else if (item == Items.diamond) {
                     boxColor = -10362113;
                     textColor = -7667713;
@@ -133,6 +137,9 @@ public class ItemESP extends Module {
         double color = getColor(x, y, z);
         if (item == Items.iron_ingot) {
             color += 0.155;
+        }
+        else if (item == Items.gold_ingot) {
+            color += 0.255;
         }
         else if (item == Items.gold_ingot) {
             color += 0.255;
