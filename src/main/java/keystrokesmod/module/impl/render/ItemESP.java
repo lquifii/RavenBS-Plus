@@ -141,7 +141,7 @@ public class ItemESP extends Module {
         else if (item == Items.gold_ingot) {
             color += 0.255;
         }
-        else if (item == Items.gold_ingot) {
+        else if (item == Items.golden_apple) {
             color += 0.255;
         }
         else if (item == Items.diamond) {
