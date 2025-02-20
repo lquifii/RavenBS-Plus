@@ -34,6 +34,8 @@ public class Settings extends Module {
 
     public static SliderSetting offset;
     public static SliderSetting timeMultiplier;
+    public static SliderSetting customThemeColor1;
+    public static SliderSetting customThemeColor2;
 
     private String[] capes = new String[] { "None", "Anime", "Aqua", "Green", "Purple", "Red", "White", "Yellow", "Myau", "Astolfo", "Vape", "Dash", "Anime2", "DreamySky", "RUBBAH", "Zambos" };
     public static List<ResourceLocation> loadedCapes = new ArrayList<>();
@@ -58,6 +60,8 @@ public class Settings extends Module {
         this.registerSetting(new DescriptionSetting("Theme colors"));
         this.registerSetting(offset = new SliderSetting("Offset", 0.5, -3.0, 3.0, 0.1));
         this.registerSetting(timeMultiplier = new SliderSetting("Time multiplier", 0.5, 0.1, 4.0, 0.1));
+        this.registerSetting(customThemeColor1 = new SliderSetting("Custom theme color 1", 0xFFFFFF, 0x000000, 0xFFFFFF, 1));
+        this.registerSetting(customThemeColor2 = new SliderSetting("Custom theme color 2", 0xFFFFFF, 0x000000, 0xFFFFFF, 1));
         this.canBeEnabled = false;
         loadCapes();
     }

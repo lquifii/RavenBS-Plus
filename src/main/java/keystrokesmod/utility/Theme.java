@@ -15,7 +15,8 @@ public enum Theme {
     Royal(new Color(125, 204, 241), new Color(30, 71, 170)), // 7
     Sky(new Color(160, 230, 225), new Color(15, 190, 220)), // 8
     Vine(new Color(17, 192, 45), new Color(201, 234, 198)), // 9
-    Vape(new Color(21, 137, 122), new Color(44, 72, 79)); // 10
+    Vape(new Color(21, 137, 122), new Color(44, 72, 79)), // 10
+    Custom(null, null); // 11
 
     private final Color firstGradient;
     private final Color secondGradient;
@@ -28,11 +29,12 @@ public enum Theme {
     }
 
     public static int getGradient(int index, double delay) {
-        if (index > 0) {
+        if (index > 0 && index < values().length - 1) {
             return convert(values()[index].firstGradient, values()[index].secondGradient, (Math.sin(System.currentTimeMillis() / 1.0E8 * Settings.timeMultiplier.getInput() * 400000.0 + delay * Settings.offset.getInput()) + 1.0) * 0.5).getRGB();
-        }
-        else if (index == 0) {
+        } else if (index == 0) {
             return getChromaOffset(2, (long) delay);
+        } else if (index == values().length - 1) {
+            return convert(new Color((int) Settings.customThemeColor1.getInput()), new Color((int) Settings.customThemeColor2.getInput()), (Math.sin(System.currentTimeMillis() / 1.0E8 * Settings.timeMultiplier.getInput() * 400000.0 + delay * Settings.offset.getInput()) + 1.0) * 0.5).getRGB();
         }
         return -1;
     }
@@ -67,5 +69,5 @@ public enum Theme {
         return new int[]{0, 0};
     }
 
-    public static String[] themes = new String[]{"Rainbow", "Cherry", "Cotton candy", "Flare", "Flower", "Gold", "Grayscale", "Royal", "Sky", "Vine", "Vape"};
+    public static String[] themes = new String[]{"Rainbow", "Cherry", "Cotton candy", "Flare", "Flower", "Gold", "Grayscale", "Royal", "Sky", "Vine", "Vape", "Custom"};
 }
