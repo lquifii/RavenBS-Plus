@@ -51,7 +51,7 @@ public class Scaffold extends Module {
     private ButtonSetting silentSwing;
 
     private String[] rotationModes = new String[] { "None", "Simple", "Offset", "Precise" };
-    private String[] sprintModes = new String[] { "None", "Vanilla", "Boost" };
+    private String[] sprintModes = new String[] { "None", "Vanilla", "Float" };
     private String[] fastScaffoldModes = new String[] { "None", "Jump B", "Jump C", "Jump D", "Keep-Y A", "Keep-Y B", "Jump A" };
     private String[] multiPlaceModes = new String[] { "Disabled", "1 extra", "2 extra" };
 
